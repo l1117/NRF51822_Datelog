@@ -102,7 +102,7 @@ static pstorage_handle_t      m_storage_handle;                                 
 #define CONNECTABLE_ADV_TIMEOUT       5  //30                                            /**< Time for which the device must be advertising in connectable mode (in seconds). */
 
 #define SLAVE_LATENCY                 0                                             /**< Slave latency. */
-#define CONN_SUP_TIMEOUT              MSEC_TO_UNITS(4000, UNIT_10_MS)               /**< Connection supervisory timeout (4 seconds). */
+#define CONN_SUP_TIMEOUT              MSEC_TO_UNITS(100, UNIT_10_MS)               /**< Connection supervisory timeout (4 seconds). */
 
 #define ADV_ENCODED_AD_TYPE_LEN       1                                             /**< Length of encoded ad type in advertisement data. */
 #define ADV_ENCODED_AD_TYPE_LEN_LEN   1                                             /**< Length of the 'length field' of each ad type in advertisement data. */
@@ -900,10 +900,12 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
     {
         case BLE_GAP_EVT_CONNECTED:
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+						nrf_gpio_pin_set (20);												//Led on.
             break;
            
         case BLE_GAP_EVT_DISCONNECTED:
-					spi_flash_pages_count=0;
+//					spi_flash_pages_count=0;
+						nrf_gpio_pin_clear(20);						//LED off.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             application_timers_stop();
  								advertising_start();
@@ -1051,6 +1053,12 @@ int main(void)
                                             | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
                                             | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
                                             | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
+		NRF_GPIO->PIN_CNF[20] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+                                            | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
+                                            | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
+                                            | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
+                                            | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
+
     timers_init();
     ble_stack_init();
     scheduler_init();    
@@ -1073,7 +1081,6 @@ int main(void)
 			power_manage();
 		}
 }
-//add test for git
 
 /** 
  * @}

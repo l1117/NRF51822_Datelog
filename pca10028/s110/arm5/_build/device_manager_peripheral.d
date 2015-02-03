@@ -20,10 +20,10 @@
 .\_build\device_manager_peripheral.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_gatt.h
 .\_build\device_manager_peripheral.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_gattc.h
 .\_build\device_manager_peripheral.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_gatts.h
-.\_build\device_manager_peripheral.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_BLE\nRF51822_xxAA\device_manager_cnfg.h
-.\_build\device_manager_peripheral.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_trace.h
+.\_build\device_manager_peripheral.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_BLE\nRF51822_xxAA\device_manager_cnfg.h
+.\_build\device_manager_peripheral.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_trace.h
 .\_build\device_manager_peripheral.o: C:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
-.\_build\device_manager_peripheral.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Drivers\nRF51822_xxAA\pstorage.h
-.\_build\device_manager_peripheral.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Drivers\nRF51822_xxAA\pstorage_platform.h
+.\_build\device_manager_peripheral.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Drivers\nRF51822_xxAA\pstorage.h
+.\_build\device_manager_peripheral.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Drivers\nRF51822_xxAA\pstorage_platform.h
 .\_build\device_manager_peripheral.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_hci.h
-.\_build\device_manager_peripheral.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_error.h
+.\_build\device_manager_peripheral.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_error.h

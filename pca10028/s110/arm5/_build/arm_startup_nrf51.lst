@@ -342,29 +342,30 @@ ARM Macro Assembler    Page 6
               00000000 
               00000000 
 Command Line: --debug --xref --cpu=Cortex-M0 --apcs=interwork --depend=.\_build
-\arm_startup_nrf51.d -o.\_build\arm_startup_nrf51.o -IC:\Users\Yelun\Desktop\nr
-ftest\pca10028\s110\arm5\RTE -IC:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm
-5\RTE\nRF_BLE\nRF51822_xxAA -IC:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5
-\RTE\nRF_Drivers\nRF51822_xxAA -IC:\Users\Yelun\Desktop\nrftest\pca10028\s110\a
-rm5\RTE\nRF_Libraries\nRF51822_xxAA -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\3.20.4\CMSI
-S\Include -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\
-ble_dfu -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\bl
-e_hrs -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\common -IC:\Keil_
-v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\device_manager -IC:\Keil_v5\ARM\P
-ACK\NordicSemiconductor\nRF_DeviceFamilyPack\1.1.4\Device\Include -IC:\Keil_v5\
-ARM\PACK\NordicSemiconductor\nRF_Drivers\1.2.0\hal -IC:\Keil_v5\ARM\PACK\Nordic
-Semiconductor\nRF_Drivers\1.2.0\pstorage -IC:\Keil_v5\ARM\PACK\NordicSemiconduc
-tor\nRF_Drivers\1.2.0\simple_uart -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF
-_Libraries\1.1.0\bootloader_dfu -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_L
-ibraries\1.1.0\bootloader_dfu\experimental -IC:\Keil_v5\ARM\PACK\NordicSemicond
-uctor\nRF_Libraries\1.1.0\fifo -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Li
-braries\1.1.0\scheduler -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries
-\1.1.0\timer -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\trac
-e -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util -IC:\Keil_
-v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_Common\1.1.0\softdevice_handler 
--IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers -
--predefine="__MICROLIB SETA 1" --list=.\_build\arm_startup_nrf51.lst RTE\Device
-\nRF51822_xxAA\arm_startup_nrf51.s
+\arm_startup_nrf51.d -o.\_build\arm_startup_nrf51.o -IC:\Users\Yelun\Documents\
+GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE -IC:\Users\Yelun\Documents\GitHu
+b\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_BLE\nRF51822_xxAA -IC:\Users\Yelu
+n\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Drivers\nRF51822
+_xxAA -IC:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE
+\nRF_Libraries\nRF51822_xxAA -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\3.20.4\CMSIS\Inclu
+de -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_dfu
+ -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_hrs -
+IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\common -IC:\Keil_v5\ARM\
+PACK\NordicSemiconductor\nRF_BLE\1.1.0\device_manager -IC:\Keil_v5\ARM\PACK\Nor
+dicSemiconductor\nRF_DeviceFamilyPack\1.1.4\Device\Include -IC:\Keil_v5\ARM\PAC
+K\NordicSemiconductor\nRF_Drivers\1.2.0\hal -IC:\Keil_v5\ARM\PACK\NordicSemicon
+ductor\nRF_Drivers\1.2.0\pstorage -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF
+_Drivers\1.2.0\simple_uart -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Librar
+ies\1.1.0\bootloader_dfu -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Librarie
+s\1.1.0\bootloader_dfu\experimental -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\n
+RF_Libraries\1.1.0\fifo -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries
+\1.1.0\scheduler -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\
+timer -IC:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\trace -IC:\
+Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util -IC:\Keil_v5\ARM\
+PACK\NordicSemiconductor\nRF_SoftDevice_Common\1.1.0\softdevice_handler -IC:\Ke
+il_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers --predef
+ine="__MICROLIB SETA 1" --list=.\_build\arm_startup_nrf51.lst RTE\Device\nRF518
+22_xxAA\arm_startup_nrf51.s
 
 
 

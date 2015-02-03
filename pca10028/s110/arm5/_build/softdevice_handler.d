@@ -17,8 +17,8 @@
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\nrf_error_soc.h
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\nrf_error.h
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\nrf_error_sdm.h
-.\_build\softdevice_handler.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_error.h
-.\_build\softdevice_handler.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_scheduler.h
+.\_build\softdevice_handler.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_error.h
+.\_build\softdevice_handler.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_scheduler.h
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\app_util.h
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\1.1.4\Device\Include\compiler_abstraction.h
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_Common\1.1.0\softdevice_handler\ble_stack_handler_types.h
@@ -32,4 +32,4 @@
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_gattc.h
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_gatts.h
 .\_build\softdevice_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_Common\1.1.0\softdevice_handler\ant_stack_handler_types.h
-.\_build\softdevice_handler.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\nrf_assert.h
+.\_build\softdevice_handler.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\nrf_assert.h

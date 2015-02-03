@@ -19,7 +19,7 @@
 .\_build\ble_conn_params.o: C:\Keil_v5\ARM\ARMCC\bin\..\include\stdlib.h
 .\_build\ble_conn_params.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\nordic_common.h
 .\_build\ble_conn_params.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_hci.h
-.\_build\ble_conn_params.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_timer.h
+.\_build\ble_conn_params.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_timer.h
 .\_build\ble_conn_params.o: C:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
-.\_build\ble_conn_params.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_error.h
-.\_build\ble_conn_params.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_scheduler.h
+.\_build\ble_conn_params.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_error.h
+.\_build\ble_conn_params.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_scheduler.h

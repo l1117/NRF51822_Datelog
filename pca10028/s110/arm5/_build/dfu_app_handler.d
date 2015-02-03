@@ -24,7 +24,7 @@
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\nordic_common.h
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\sdk_os.h
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\sdk_errors.h
-.\_build\dfu_app_handler.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_BLE\nRF51822_xxAA\device_manager_cnfg.h
+.\_build\dfu_app_handler.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_BLE\nRF51822_xxAA\device_manager_cnfg.h
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\bootloader_dfu\bootloader_util.h
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\1.1.4\Device\Include\nrf.h
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\1.1.4\Device\Include\nrf51.h
@@ -39,5 +39,5 @@
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\nrf_soc.h
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\nrf_error_soc.h
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\nrf_error_sdm.h
-.\_build\dfu_app_handler.o: C:\Users\Yelun\Desktop\nrftest\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_error.h
+.\_build\dfu_app_handler.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_error.h
 .\_build\dfu_app_handler.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\bootloader_dfu\dfu_ble_svc.h
