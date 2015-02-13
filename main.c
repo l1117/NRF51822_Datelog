@@ -358,7 +358,7 @@ static void gap_params_init(void)
 		gap_conn_params.min_conn_interval = MSEC_TO_UNITS(500, UNIT_1_25_MS) ;	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
 		gap_conn_params.max_conn_interval =  MSEC_TO_UNITS(1000, UNIT_1_25_MS);	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
 		gap_conn_params.slave_latency     = 0;		//SLAVE_LATENCY;
-		gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(400, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
+		gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(4000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
     err_code = sd_ble_gap_ppcp_set(&gap_conn_params);
     APP_ERROR_CHECK(err_code);
 }

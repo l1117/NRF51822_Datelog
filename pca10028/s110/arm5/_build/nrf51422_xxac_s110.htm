@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\_build\nrf51422_xxac_s110.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\_build\nrf51422_xxac_s110.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Tue Feb 03 14:28:06 2015
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Fri Feb 13 08:52:00 2015
 <BR><P>
 <H3>Maximum Stack Usage =        384 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -756,7 +756,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;reset_prepare
 </UL>
 
-<P><STRONG><a name="[61]"></a>application_timers_start</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, main.o(i.application_timers_start))
+<P><STRONG><a name="[61]"></a>application_timers_start</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, main.o(i.application_timers_start))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = application_timers_start &rArr; app_timer_start &rArr; timer_start_op_schedule &rArr; user_op_alloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_timer_start
@@ -776,7 +776,7 @@ Local Symbols
 </UL>
 
 <P><STRONG><a name="[23]"></a>ble_evt_dispatch</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, main.o(i.ble_evt_dispatch))
-<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = ble_evt_dispatch &rArr; on_ble_evt &rArr; on_write &rArr; application_timers_start &rArr; app_timer_start &rArr; timer_start_op_schedule &rArr; user_op_alloc
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = ble_evt_dispatch &rArr; on_ble_evt &rArr; on_write &rArr; application_timers_start &rArr; app_timer_start &rArr; timer_start_op_schedule &rArr; user_op_alloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_dfu_on_ble_evt
 <LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
@@ -823,7 +823,7 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
-<P><STRONG><a name="[91]"></a>gap_params_init</STRONG> (Thumb, 164 bytes, Stack size 72 bytes, main.o(i.gap_params_init))
+<P><STRONG><a name="[91]"></a>gap_params_init</STRONG> (Thumb, 170 bytes, Stack size 72 bytes, main.o(i.gap_params_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = gap_params_init &rArr; __2sprintf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
@@ -850,8 +850,8 @@ Local Symbols
 <LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 </UL>
 
-<P><STRONG><a name="[73]"></a>on_ble_evt</STRONG> (Thumb, 136 bytes, Stack size 16 bytes, main.o(i.on_ble_evt))
-<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = on_ble_evt &rArr; on_write &rArr; application_timers_start &rArr; app_timer_start &rArr; timer_start_op_schedule &rArr; user_op_alloc
+<P><STRONG><a name="[73]"></a>on_ble_evt</STRONG> (Thumb, 238 bytes, Stack size 24 bytes, main.o(i.on_ble_evt))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = on_ble_evt &rArr; on_write &rArr; application_timers_start &rArr; app_timer_start &rArr; timer_start_op_schedule &rArr; user_op_alloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 <LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
