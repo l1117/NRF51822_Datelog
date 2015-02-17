@@ -66,7 +66,7 @@ static pstorage_handle_t      m_storage_handle;                                 
 #define APP_CFG_NON_CONN_ADV_TIMEOUT  30                                            /**< Time for which the device must be advertising in non-connectable mode (in seconds). */
 #define APP_CFG_CHAR_NOTIF_TIMEOUT    5000                                          /**< Time for which the device must continue to send notifications once connected to central (in milli seconds). */
 #define APP_CFG_ADV_DATA_LEN          31                                            /**< Required length of the complete advertisement packet. This should be atleast 8 in order to accommodate flag field and other mandatory fields and one byte of manufacturer specific data. */
-#define APP_CFG_CONNECTION_INTERVAL   500  //20                                            /**< Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
+#define APP_CFG_CONNECTION_INTERVAL   10                                            /**< Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
 #define APP_CFG_CHAR_LEN              20                                            /**< Size of the characteristic value being notified (in bytes). */
 
 #ifdef BLE_DFU_APP_SUPPORT
@@ -170,6 +170,8 @@ static uint32_t *spi_base_address;
 static uint16_t spi_flash_pages = 0;
 static uint16_t spi_flash_pages_count = 0;
 static uint32_t timer_counter = 0;
+static uint32_t timer_shifting = 0;
+
 //// page in flash
 //    uint32_t pg_size ;
 //    uint32_t pg_num ;  
@@ -302,7 +304,7 @@ static void char_notify(void)
 				ble_gatts_hvx_params_t hvx_params;
 
         memset(&hvx_params, 0, sizeof(hvx_params));
-        len = sizeof(uint8_t)*2;//20;
+        len = sizeof(uint8_t)*20;  						 //May 20 it the Max length for faster transmit speed.
 //				tx_data[0] = timer_counter;
 //				tx_data[1] = timer_counter >> 8;
 //				tx_data[1] = timer_counter >> 16;
@@ -311,9 +313,12 @@ static void char_notify(void)
         hvx_params.type     = BLE_GATT_HVX_NOTIFICATION;
         hvx_params.offset   = 0;
         hvx_params.p_len    = &len;
-        hvx_params.p_data   = ((uint8_t *) &timer_counter);  //m_char_value;
+        hvx_params.p_data   = ((uint8_t *) &timer_shifting);  //m_char_value;
+    for (uint8_t i =0 ; i<6 ; i++) {
+					timer_shifting++;
+					err_code = sd_ble_gatts_hvx(m_conn_handle, &hvx_params);
+				}
 
-        err_code = sd_ble_gatts_hvx(m_conn_handle, &hvx_params);
         if ((err_code != NRF_SUCCESS) &&
             (err_code != NRF_ERROR_INVALID_STATE) &&
             (err_code != BLE_ERROR_NO_TX_BUFFERS) &&
@@ -648,7 +653,7 @@ static void connection_interval_timeout_handler(void * p_context)
     UNUSED_PARAMETER(p_context);
 
     // Into next connection interval. Send one notification.
-    char_notify();
+				char_notify();
 }
 static void example_cb_handler(pstorage_handle_t  * handle,
 															 uint8_t              op_code,
@@ -876,13 +881,17 @@ static void on_write(ble_evt_t * p_ble_evt)
 
         if (m_is_notifying_enabled)
         {
-            application_timers_start();
+//            application_timers_start();
+						timer_shifting = 0;
             char_notify();
         }
         else
         {
             application_timers_stop();
         }
+
+
+
     }
 }
 
@@ -902,13 +911,16 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						nrf_gpio_pin_set (20);												//Led on.
  
 						ble_gap_conn_params_t   gap_conn_params;
-						gap_conn_params.min_conn_interval = MSEC_TO_UNITS(500, UNIT_1_25_MS) ;	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-						gap_conn_params.max_conn_interval =  MSEC_TO_UNITS(1000, UNIT_1_25_MS);	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
+						gap_conn_params.min_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
+						gap_conn_params.max_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
 						gap_conn_params.slave_latency     = 0;		//SLAVE_LATENCY;
 						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(4000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
 						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
             APP_ERROR_CHECK(err_code);
+            break;
 
+        case BLE_EVT_TX_COMPLETE:
+            char_notify();
             break;
            
         case BLE_GAP_EVT_DISCONNECTED:
@@ -938,6 +950,9 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
         case BLE_GATTS_EVT_WRITE:
             on_write(p_ble_evt);
             break;
+
+
+
         case BLE_GATTC_EVT_TIMEOUT:
         case BLE_GATTS_EVT_TIMEOUT:
             // Disconnect on GATT Server and Client timeout events.
