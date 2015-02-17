@@ -66,7 +66,7 @@ static pstorage_handle_t      m_storage_handle;                                 
 #define APP_CFG_NON_CONN_ADV_TIMEOUT  30                                            /**< Time for which the device must be advertising in non-connectable mode (in seconds). */
 #define APP_CFG_CHAR_NOTIF_TIMEOUT    5000                                          /**< Time for which the device must continue to send notifications once connected to central (in milli seconds). */
 #define APP_CFG_ADV_DATA_LEN          31                                            /**< Required length of the complete advertisement packet. This should be atleast 8 in order to accommodate flag field and other mandatory fields and one byte of manufacturer specific data. */
-#define APP_CFG_CONNECTION_INTERVAL   10                                            /**< Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
+#define APP_CFG_CONNECTION_INTERVAL   24                                            /**< Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
 #define APP_CFG_CHAR_LEN              20                                            /**< Size of the characteristic value being notified (in bytes). */
 
 #ifdef BLE_DFU_APP_SUPPORT
@@ -304,7 +304,7 @@ static void char_notify(void)
 				ble_gatts_hvx_params_t hvx_params;
 
         memset(&hvx_params, 0, sizeof(hvx_params));
-        len = sizeof(uint8_t)*20;  						 //May 20 it the Max length for faster transmit speed.
+//        len = sizeof(uint8_t)*2;  						 //May 20 it the Max length for faster transmit speed.
 //				tx_data[0] = timer_counter;
 //				tx_data[1] = timer_counter >> 8;
 //				tx_data[1] = timer_counter >> 16;
@@ -315,21 +315,24 @@ static void char_notify(void)
         hvx_params.p_len    = &len;
         hvx_params.p_data   = ((uint8_t *) &timer_shifting);  //m_char_value;
     for (uint8_t i =0 ; i<6 ; i++) {
-					timer_shifting++;
+				err_code = NRF_SUCCESS;
+//				while(true){
+					timer_shifting ++;
 					err_code = sd_ble_gatts_hvx(m_conn_handle, &hvx_params);
-				}
-
-        if ((err_code != NRF_SUCCESS) &&
-            (err_code != NRF_ERROR_INVALID_STATE) &&
-            (err_code != BLE_ERROR_NO_TX_BUFFERS) &&
-            (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
-        )
-        {
-            APP_ERROR_HANDLER(err_code);
-        }
-    }
+					if ((err_code = BLE_ERROR_NO_TX_BUFFERS) ||
+							(err_code = NRF_ERROR_INVALID_STATE) ||
+							(err_code = BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+					)
+							{
+//									break;
+							}
+					else if ((err_code != NRF_SUCCESS))
+							{
+									APP_ERROR_HANDLER(err_code);
+							}
+					}
+		}
 }
-
 
 /**@brief Function for the GAP initialization.
  *
@@ -356,16 +359,16 @@ static void gap_params_init(void)
 //                                          strlen(DEVICE_NAME));
     APP_ERROR_CHECK(err_code);
     
-    memset(&gap_conn_params, 0, sizeof(gap_conn_params));
+//    memset(&gap_conn_params, 0, sizeof(gap_conn_params));
 
-    // Set GAP Peripheral Preferred Connection Parameters (converting connection interval from
-    // milliseconds to required unit of 1.25ms).
-		gap_conn_params.min_conn_interval = MSEC_TO_UNITS(500, UNIT_1_25_MS) ;	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-		gap_conn_params.max_conn_interval =  MSEC_TO_UNITS(1000, UNIT_1_25_MS);	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-		gap_conn_params.slave_latency     = 0;		//SLAVE_LATENCY;
-		gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(4000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
-    err_code = sd_ble_gap_ppcp_set(&gap_conn_params);
-    APP_ERROR_CHECK(err_code);
+//    // Set GAP Peripheral Preferred Connection Parameters (converting connection interval from
+//    // milliseconds to required unit of 1.25ms).
+//		gap_conn_params.min_conn_interval = MSEC_TO_UNITS(500, UNIT_1_25_MS) ;	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
+//		gap_conn_params.max_conn_interval =  MSEC_TO_UNITS(1000, UNIT_1_25_MS);	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
+//		gap_conn_params.slave_latency     = 0;		//SLAVE_LATENCY;
+//		gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(4000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
+//    err_code = sd_ble_gap_ppcp_set(&gap_conn_params);
+//    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -871,6 +874,7 @@ static void timers_init(void)
  */
 static void on_write(ble_evt_t * p_ble_evt)
 {
+		uint32_t err_code;
     ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
 
 //    if ((p_evt_write->handle == m_char_handles.cccd_handle) && (p_evt_write->len == 2))
@@ -881,6 +885,14 @@ static void on_write(ble_evt_t * p_ble_evt)
 
         if (m_is_notifying_enabled)
         {
+//						ble_gap_conn_params_t   gap_conn_params;
+//						gap_conn_params.min_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
+//						gap_conn_params.max_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
+//						gap_conn_params.slave_latency     = 0;		//SLAVE_LATENCY;
+//						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(4000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
+//						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
+//            APP_ERROR_CHECK(err_code);
+
 //            application_timers_start();
 						timer_shifting = 0;
             char_notify();
@@ -911,10 +923,14 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						nrf_gpio_pin_set (20);												//Led on.
  
 						ble_gap_conn_params_t   gap_conn_params;
-						gap_conn_params.min_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-						gap_conn_params.max_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-						gap_conn_params.slave_latency     = 0;		//SLAVE_LATENCY;
-						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(4000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
+//						gap_conn_params.min_conn_interval = 10; //((4 * APP_CFG_CONNECTION_INTERVAL) / 5)-1;
+//						gap_conn_params.max_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
+//						gap_conn_params.slave_latency     = 4;		//SLAVE_LATENCY;
+//						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(1000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
+						gap_conn_params.min_conn_interval = (4 * 20) / 5;	//Interval Max * (Slave Latency + 1) <= 2 seconds
+						gap_conn_params.max_conn_interval = (4 * 40) / 5;	//Interval Min + 20 ms >= Interval Max Slave Latency = 4
+						gap_conn_params.slave_latency     = 8;		//connSupervisionTimeout <= 6 seconds
+						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(1330, UNIT_10_MS) ;	//Interval Max * (Slave Latency + 1) * 3 < connSupervisionTimeout
 						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
             APP_ERROR_CHECK(err_code);
             break;
@@ -928,7 +944,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						nrf_gpio_pin_clear(20);						//LED off.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             application_timers_stop();
- 								advertising_start();
+ 						advertising_start();
             
             // Go to system-off mode            
 //            err_code = sd_power_system_off();
