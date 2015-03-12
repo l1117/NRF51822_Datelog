@@ -314,17 +314,17 @@ static void char_notify(void)
         hvx_params.offset   = 0;
         hvx_params.p_len    = &len;
         hvx_params.p_data   = ((uint8_t *) &timer_shifting);  //m_char_value;
-    for (uint8_t i =0 ; i<6 ; i++) {
+//    for (uint8_t i =0 ; i<6 ; i++) {
 				err_code = NRF_SUCCESS;
-//				while(true){
+				while(true){
 					timer_shifting ++;
 					err_code = sd_ble_gatts_hvx(m_conn_handle, &hvx_params);
-					if ((err_code = BLE_ERROR_NO_TX_BUFFERS) ||
-							(err_code = NRF_ERROR_INVALID_STATE) ||
-							(err_code = BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+					if ((err_code == BLE_ERROR_NO_TX_BUFFERS) ||
+							(err_code == NRF_ERROR_INVALID_STATE) ||
+							(err_code == BLE_ERROR_GATTS_SYS_ATTR_MISSING)
 					)
 							{
-//									break;
+									break;
 							}
 					else if ((err_code != NRF_SUCCESS))
 							{
@@ -900,6 +900,10 @@ static void on_write(ble_evt_t * p_ble_evt)
         else
         {
             application_timers_stop();
+            err_code = sd_ble_gap_disconnect(m_conn_handle,
+                                             BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
+            APP_ERROR_CHECK(err_code);
+
         }
 
 
@@ -923,14 +927,14 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						nrf_gpio_pin_set (20);												//Led on.
  
 						ble_gap_conn_params_t   gap_conn_params;
-//						gap_conn_params.min_conn_interval = 10; //((4 * APP_CFG_CONNECTION_INTERVAL) / 5)-1;
-//						gap_conn_params.max_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-//						gap_conn_params.slave_latency     = 4;		//SLAVE_LATENCY;
-//						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(1000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
-						gap_conn_params.min_conn_interval = (4 * 20) / 5;	//Interval Max * (Slave Latency + 1) <= 2 seconds
-						gap_conn_params.max_conn_interval = (4 * 40) / 5;	//Interval Min + 20 ms >= Interval Max Slave Latency = 4
-						gap_conn_params.slave_latency     = 8;		//connSupervisionTimeout <= 6 seconds
-						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(1330, UNIT_10_MS) ;	//Interval Max * (Slave Latency + 1) * 3 < connSupervisionTimeout
+						gap_conn_params.min_conn_interval = 10; //((4 * APP_CFG_CONNECTION_INTERVAL) / 5)-1;
+						gap_conn_params.max_conn_interval = (4 * 24) / 5;
+						gap_conn_params.slave_latency     = 4;		//SLAVE_LATENCY;
+						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(400, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
+//						gap_conn_params.min_conn_interval = (4 * 20) / 5;	//Interval Max * (Slave Latency + 1) <= 2 seconds
+//						gap_conn_params.max_conn_interval = (4 * 40) / 5;	//Interval Min + 20 ms >= Interval Max Slave Latency = 4
+//						gap_conn_params.slave_latency     = 8;		//connSupervisionTimeout <= 6 seconds
+//						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(1330, UNIT_10_MS) ;	//Interval Max * (Slave Latency + 1) * 3 < connSupervisionTimeout
 						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
             APP_ERROR_CHECK(err_code);
             break;

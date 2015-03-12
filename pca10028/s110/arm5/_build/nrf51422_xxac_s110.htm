@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\_build\nrf51422_xxac_s110.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\_build\nrf51422_xxac_s110.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Tue Feb 17 16:24:23 2015
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Thu Mar 05 17:01:01 2015
 <BR><P>
 <H3>Maximum Stack Usage =        384 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -403,6 +403,7 @@ Global Symbols
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;scheduler_init
 <LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;reset_prepare
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;power_manage
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 <LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;notif_timeout_handler
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gap_params_init
@@ -783,7 +784,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[7f]"></a>char_notify</STRONG> (Thumb, 136 bytes, Stack size 32 bytes, main.o(i.char_notify))
+<P><STRONG><a name="[7f]"></a>char_notify</STRONG> (Thumb, 130 bytes, Stack size 32 bytes, main.o(i.char_notify))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = char_notify
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
@@ -841,7 +842,7 @@ Local Symbols
 </UL>
 
 <P><STRONG><a name="[72]"></a>on_ble_evt</STRONG> (Thumb, 244 bytes, Stack size 24 bytes, main.o(i.on_ble_evt))
-<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = on_ble_evt &rArr; on_write &rArr; application_timers_stop &rArr; app_timer_stop &rArr; timer_stop_op_schedule &rArr; user_op_alloc
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = on_ble_evt &rArr; on_write &rArr; application_timers_stop &rArr; app_timer_stop &rArr; timer_stop_op_schedule &rArr; user_op_alloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 <LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
@@ -854,10 +855,11 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_evt_dispatch
 </UL>
 
-<P><STRONG><a name="[a6]"></a>on_write</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, main.o(i.on_write))
-<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = on_write &rArr; application_timers_stop &rArr; app_timer_stop &rArr; timer_stop_op_schedule &rArr; user_op_alloc
+<P><STRONG><a name="[a6]"></a>on_write</STRONG> (Thumb, 102 bytes, Stack size 24 bytes, main.o(i.on_write))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = on_write &rArr; application_timers_stop &rArr; app_timer_stop &rArr; timer_stop_op_schedule &rArr; user_op_alloc
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;char_notify
+<BR>[Calls]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;char_notify
 <LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;application_timers_stop
 </UL>
 <BR>[Called By]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
