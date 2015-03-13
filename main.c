@@ -163,6 +163,8 @@ static app_timer_id_t           m_conn_int_timer_id;                            
 static app_timer_id_t           m_notif_timer_id;                                   /**< Notification timer. */
 /////////////////////////added by yelun
 static app_timer_id_t           m_s5tm_timer_id;  
+static app_timer_id_t           m_timecounter_id;  
+
 static uint8_t tx_data[522]; /**< SPI TX buffer. */
 static uint8_t rx_data[522]; /**< SPI RX buffer. */
 static uint32_t flash_page_data[256];
@@ -675,9 +677,9 @@ static void s5tm_timeout_handler(void * p_context)
 		uint16_t timer_flash_id = ((timer_counter/TIME_PERIOD) & 0x00ff);
 		uint16_t Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
 		uint16_t len = 4;
-		timer_counter+=TIME_PERIOD;
-
-				battery_start(4);	
+//		timer_counter+=TIME_PERIOD;
+				battery_start(4);	 //For 3.3V boster
+//					battery_start(6);  //For 3.7V Li Battery 
 	
 //				ble_bas_battery_level_update(&m_bas,batt_lvl_in_milli_volts/100);  //For display 3.0V*100 on IOS
 				
@@ -763,7 +765,16 @@ static void s5tm_timeout_handler(void * p_context)
 //    APP_ERROR_CHECK(err_code);
 }
 
-
+static void timecounter_handler(void * p_context)
+{
+    UNUSED_PARAMETER(p_context);
+		timer_counter++ ;
+			  m_addl_adv_manuf_data[0]=( timer_counter>>24);
+			  m_addl_adv_manuf_data[1]=( timer_counter>>16);
+			  m_addl_adv_manuf_data[2]=( timer_counter>>8);
+			  m_addl_adv_manuf_data[3]=( timer_counter);
+		advertising_data_init();
+}
 
 
 
@@ -861,6 +872,12 @@ static void timers_init(void)
                                 APP_TIMER_MODE_REPEATED,
                                 s5tm_timeout_handler);
     APP_ERROR_CHECK(err_code);
+
+    err_code = app_timer_create(&m_timecounter_id,
+                                APP_TIMER_MODE_REPEATED,
+                                timecounter_handler);
+    APP_ERROR_CHECK(err_code);
+
 }
 
 
@@ -1125,6 +1142,7 @@ int main(void)
     advertising_data_init();
     advertising_start();
     err_code = app_timer_start(m_s5tm_timer_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
+    err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(1000, APP_TIMER_PRESCALER), NULL);
 		for(;;)	{
       app_sched_execute();
 			power_manage();
