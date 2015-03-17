@@ -99,7 +99,7 @@ static pstorage_handle_t      m_storage_handle;                                 
 
 #define CONNECTABLE_ADV_INTERVAL      MSEC_TO_UNITS(1000, UNIT_0_625_MS)              /**< The advertising interval for connectable advertisement (20 ms). This value can vary between 20ms to 10.24s. */
 #define NON_CONNECTABLE_ADV_INTERVAL  MSEC_TO_UNITS(1000, UNIT_0_625_MS)             /**< The advertising interval for non-connectable advertisement (100 ms). This value can vary between 100ms to 10.24s). */
-#define CONNECTABLE_ADV_TIMEOUT       5  //30                                            /**< Time for which the device must be advertising in connectable mode (in seconds). */
+#define CONNECTABLE_ADV_TIMEOUT       0   //5  //30                                            /**< Time for which the device must be advertising in connectable mode (in seconds). */
 
 #define SLAVE_LATENCY                 0                                             /**< Slave latency. */
 #define CONN_SUP_TIMEOUT              MSEC_TO_UNITS(100, UNIT_10_MS)               /**< Connection supervisory timeout (4 seconds). */
@@ -173,7 +173,7 @@ static uint16_t spi_flash_pages = 0;
 static uint16_t spi_flash_pages_count = 0;
 static uint32_t timer_counter = 0;
 static uint32_t timer_shifting = 0;
-
+static pstorage_handle_t flash_handle_last;
 //// page in flash
 //    uint32_t pg_size ;
 //    uint32_t pg_num ;  
@@ -403,7 +403,7 @@ static void advertising_data_init(void)
     uint32_t                   err_code;
     ble_advdata_t              advdata;
     ble_advdata_manuf_data_t   manuf_data;
-    uint8_t                    flags = BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
+    uint8_t                    flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
 //		int8_t											tx_power_level = 4;
     APP_ERROR_CHECK_BOOL(sizeof(flags) == ADV_FLAGS_LEN);  // Assert that these two values of the same.
 
@@ -674,7 +674,7 @@ static void s5tm_timeout_handler(void * p_context)
     UNUSED_PARAMETER(p_context);
 		uint8_t data_id = 0;
     uint32_t err_code=0;
-		uint16_t timer_flash_id = ((timer_counter/TIME_PERIOD) & 0x00ff);
+		uint8_t timer_flash_id = ((uint8_t)( timer_counter/TIME_PERIOD));
 		uint16_t Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
 		uint16_t len = 4;
 //		timer_counter+=TIME_PERIOD;
@@ -715,7 +715,8 @@ static void s5tm_timeout_handler(void * p_context)
 						}
 					}
 				}
-				flash_page_data[timer_flash_id] = (Vtm_humi << 16) + Vtm_temp ;
+//				flash_page_data[timer_flash_id] = (Vtm_humi << 16) + Vtm_temp ;
+				flash_page_data[timer_flash_id] = timer_counter ; //test flash write
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
 				nrf_gpio_pin_clear (13);
 				int32_t nrf_temp,ss ;
@@ -731,12 +732,20 @@ static void s5tm_timeout_handler(void * p_context)
 				ss = HTONL(timer_counter);
 	      sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&ss);
 
-				if (timer_flash_id == 0xff){									//flash write
+//				if (timer_flash_id == 0xff){									//flash write
+//						pstorage_handle_t flash_handle;
+//						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8)-1)%100), &flash_handle);
+//						err_code = pstorage_clear(&flash_handle,1024);
+//						err_code = pstorage_store(&flash_handle, (uint8_t * ) flash_page_data, 1024, 0);
+//						}
 						pstorage_handle_t flash_handle;
-						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8)-1)%100), &flash_handle);
-						err_code = pstorage_clear(&flash_handle,1024);
-						err_code = pstorage_store(&flash_handle, (uint8_t * ) flash_page_data, 1024, 0);
-						}
+//						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8)-1)%100), &flash_handle);
+						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%100), &flash_handle);
+						if (flash_handle.block_id != flash_handle_last.block_id || flash_handle.module_id != flash_handle_last.module_id) {
+								flash_handle_last = flash_handle;
+								err_code = pstorage_clear(&flash_handle,1024);
+							}
+						err_code = pstorage_store(&flash_handle, (uint8_t * ) &timer_counter, 4, timer_flash_id*4);
 
 			  m_addl_adv_manuf_data[0]=( timer_counter>>24);
 			  m_addl_adv_manuf_data[1]=( timer_counter>>16);
@@ -769,10 +778,12 @@ static void timecounter_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
 		timer_counter++ ;
-			  m_addl_adv_manuf_data[0]=( timer_counter>>24);
-			  m_addl_adv_manuf_data[1]=( timer_counter>>16);
-			  m_addl_adv_manuf_data[2]=( timer_counter>>8);
-			  m_addl_adv_manuf_data[3]=( timer_counter);
+			 *( (uint32_t *) m_addl_adv_manuf_data) = timer_counter ;
+
+//			  m_addl_adv_manuf_data[0]=( timer_counter>>24);
+//			  m_addl_adv_manuf_data[1]=( timer_counter>>16);
+//			  m_addl_adv_manuf_data[2]=( timer_counter>>8);
+//			  m_addl_adv_manuf_data[3]=( timer_counter);
 		advertising_data_init();
 }
 
@@ -826,20 +837,13 @@ static void application_timers_stop(void)
 static void advertising_start(void)
 {
     uint32_t err_code;
-//    uint32_t count;
+    uint32_t count;
 
-//    // Verify if there is any flash access pending, if yes delay starting advertising until
-//    // it's complete.
-//    err_code = pstorage_access_status_get(&count);
-//    APP_ERROR_CHECK(err_code);
-
-//    if (count != 0)
-//    {
-//        m_memory_access_in_progress = true;
-//        return;
-//    }
-
-    
+    // Verify if there is any flash access pending, if yes delay starting advertising until
+    // it's complete.
+		err_code = pstorage_access_status_get(&count);
+		APP_ERROR_CHECK(err_code);
+		if (count) nrf_delay_ms(20);
     err_code = sd_ble_gap_adv_start(&m_adv_params);
     APP_ERROR_CHECK(err_code);
 }
@@ -1043,6 +1047,7 @@ static void sys_evt_dispatch(uint32_t sys_evt)
     switch(sys_evt)
     {
         case NRF_EVT_FLASH_OPERATION_SUCCESS:
+						break;
         case NRF_EVT_FLASH_OPERATION_ERROR:
 
             if (m_memory_access_in_progress)
