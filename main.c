@@ -165,15 +165,20 @@ static app_timer_id_t           m_notif_timer_id;                               
 static app_timer_id_t           m_s5tm_timer_id;  
 static app_timer_id_t           m_timecounter_id;  
 
-static uint8_t tx_data[522]; /**< SPI TX buffer. */
-static uint8_t rx_data[522]; /**< SPI RX buffer. */
-static uint32_t flash_page_data[256];
+//static uint8_t tx_data[522]; /**< SPI TX buffer. */
+//static uint8_t rx_data[522]; /**< SPI RX buffer. */
+//static uint32_t flash_page_data[256];
 static uint32_t *spi_base_address;
 static uint16_t spi_flash_pages = 0;
 static uint16_t spi_flash_pages_count = 0;
 static uint32_t timer_counter = 0;
 static uint32_t timer_shifting = 0;
 static pstorage_handle_t flash_handle_last;
+
+static ble_advdata_t              advdata;
+static ble_advdata_manuf_data_t   manuf_data;
+static uint8_t                    flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
+
 //// page in flash
 //    uint32_t pg_size ;
 //    uint32_t pg_num ;  
@@ -716,7 +721,7 @@ static void s5tm_timeout_handler(void * p_context)
 					}
 				}
 //				flash_page_data[timer_flash_id] = (Vtm_humi << 16) + Vtm_temp ;
-				flash_page_data[timer_flash_id] = timer_counter ; //test flash write
+//				flash_page_data[timer_flash_id] = timer_counter ; //test flash write
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
 				nrf_gpio_pin_clear (13);
 				int32_t nrf_temp,ss ;
@@ -747,11 +752,14 @@ static void s5tm_timeout_handler(void * p_context)
 							}
 						err_code = pstorage_store(&flash_handle, (uint8_t * ) &timer_counter, 4, timer_flash_id*4);
 
-			  m_addl_adv_manuf_data[0]=( timer_counter>>24);
-			  m_addl_adv_manuf_data[1]=( timer_counter>>16);
-			  m_addl_adv_manuf_data[2]=( timer_counter>>8);
-			  m_addl_adv_manuf_data[3]=( timer_counter);
-			  m_addl_adv_manuf_data[4]=( Vtm_temp>>8);
+			 *( (uint32_t *)     m_addl_adv_manuf_data)  = timer_counter ;
+			 *( (uint16_t *) (m_addl_adv_manuf_data+4))  = Vtm_temp ;
+			 *( (uint16_t *) (m_addl_adv_manuf_data+6))  = Vtm_unknow ;
+			 *( (uint16_t *) (m_addl_adv_manuf_data+8))  = Vtm_humi;
+			 *( (uint16_t *) (m_addl_adv_manuf_data+10)) = batt_lvl_in_milli_volts ;
+			 *( (uint32_t *) (m_addl_adv_manuf_data+12)) = nrf_temp ;
+
+/*			 m_addl_adv_manuf_data[4]=( Vtm_temp>>8);
 			  m_addl_adv_manuf_data[5]=( Vtm_temp);
 			  m_addl_adv_manuf_data[6]=( Vtm_unknow>>8);
 			  m_addl_adv_manuf_data[7]=( Vtm_unknow);
@@ -763,20 +771,21 @@ static void s5tm_timeout_handler(void * p_context)
 				m_addl_adv_manuf_data[13]=(nrf_temp>>16);
 				m_addl_adv_manuf_data[14]=(nrf_temp>>8);
 				m_addl_adv_manuf_data[15]=(nrf_temp);
-
+*/
 //				len=20;
 //				err_code = sd_ble_gatts_value_set(m_char_handles.value_handle,
 //																							0,
 //																							&len,
 //																							m_addl_adv_manuf_data);
 
-		advertising_data_init();
-//    APP_ERROR_CHECK(err_code);
+    err_code = ble_advdata_set(&advdata, NULL);
+    APP_ERROR_CHECK(err_code);
 }
 
 static void timecounter_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
+		uint32_t err_code;
 		timer_counter++ ;
 			 *( (uint32_t *) m_addl_adv_manuf_data) = timer_counter ;
 
@@ -784,7 +793,8 @@ static void timecounter_handler(void * p_context)
 //			  m_addl_adv_manuf_data[1]=( timer_counter>>16);
 //			  m_addl_adv_manuf_data[2]=( timer_counter>>8);
 //			  m_addl_adv_manuf_data[3]=( timer_counter);
-		advertising_data_init();
+    err_code = ble_advdata_set(&advdata, NULL);
+    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -1116,8 +1126,8 @@ int main(void)
 //		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_MODE_ON);
 	 	nrf_delay_ms(20);  //There must be 20ms waitting for AT45DB161 ready from power on.
 		spi_base_address=spi_master_init(SPI0, SPI_MODE0, 0);
-		tx_data[0]=0XB9;
-    spi_master_tx_rx(spi_base_address, 1, (const uint8_t *)tx_data, rx_data);
+		uint8_t tx_data[ ]={0XB9};
+    spi_master_tx_rx(spi_base_address, 1, (const uint8_t *)tx_data, tx_data);
 
 		NRF_GPIO->PIN_CNF[13] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
                                             | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos)
@@ -1144,8 +1154,21 @@ int main(void)
 //    sd_ble_gap_tx_power_set(4);
 		service_add();
 		connectable_adv_init();
-    advertising_data_init();
-    advertising_start();
+//    advertising_data_init();
+		{
+			APP_ERROR_CHECK_BOOL(sizeof(flags) == ADV_FLAGS_LEN);  // Assert that these two values of the same.
+			// Build and set advertising data
+			memset(&advdata, 0, sizeof(advdata));
+			manuf_data.company_identifier = COMPANY_IDENTIFIER;
+			manuf_data.data.size          = ADV_ADDL_MANUF_DATA_LEN;
+			manuf_data.data.p_data        = m_addl_adv_manuf_data;
+			advdata.flags.size            = sizeof(flags);
+			advdata.flags.p_data          = &flags;
+			advdata.p_manuf_specific_data = &manuf_data;
+			err_code = ble_advdata_set(&advdata, NULL);
+			APP_ERROR_CHECK(err_code);
+			}
+		advertising_start();
     err_code = app_timer_start(m_s5tm_timer_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
     err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(1000, APP_TIMER_PRESCALER), NULL);
 		for(;;)	{
