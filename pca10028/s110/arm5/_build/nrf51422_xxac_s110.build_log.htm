@@ -4,14 +4,42 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\ble_app_pwr_profiling_s110_pca10028.uvprojx
-Project File Date:  01/30/2015
+Project File Date:  03/17/2015
 
 <h2>Output:</h2>
 Build target 'nrf51822_5TM_s110'
+compiling main.c...
+..\..\..\main.c(353): warning:  #177-D: variable "gap_conn_params" was declared but never referenced
+      ble_gap_conn_params_t   gap_conn_params;
+..\..\..\main.c(545): warning:  #223-D: function "ble_conn_params_stop" declared implicitly
+      err_code = ble_conn_params_stop();
+..\..\..\main.c(694): warning:  #177-D: variable "rx_count" was declared but never referenced
+                                uint8_t cr,rx_count=10;
+..\..\..\main.c(59): warning:  #177-D: variable "m_storage_handle" was declared but never referenced
+  static pstorage_handle_t      m_storage_handle;                                     /**< Persistent storage handle for blocks requested by the module. */
+..\..\..\main.c(147): warning:  #177-D: variable "m_base_uuid128" was declared but never referenced
+  static const ble_uuid128_t m_base_uuid128 =
+..\..\..\main.c(165): warning:  #177-D: variable "m_s5tm_timer_id" was declared but never referenced
+  static app_timer_id_t           m_s5tm_timer_id;  
+..\..\..\main.c(172): warning:  #177-D: variable "spi_flash_pages" was declared but never referenced
+  static uint16_t spi_flash_pages = 0;
+..\..\..\main.c(173): warning:  #177-D: variable "spi_flash_pages_count" was declared but never referenced
+  static uint16_t spi_flash_pages_count = 0;
+..\..\..\main.c(198): warning:  #550-D: variable "pstorage_wait_flag" was set but never used
+  static uint8_t pstorage_wait_flag = 0;
+..\..\..\main.c(406): warning:  #177-D: function "advertising_data_init" was declared but never referenced
+  static void advertising_data_init(void)
+..\..\..\main.c(437): warning:  #177-D: function "char_add" was declared but never referenced
+  static void char_add(const uint8_t uuid_type)
+..\..\..\main.c(808): warning:  #177-D: function "application_timers_start" was declared but never referenced
+  static void application_timers_start(void)
+..\..\..\main.c(1104): warning:  #177-D: function "dm_pstorage_cb_handler" was declared but never referenced
+  static void dm_pstorage_cb_handler(pstorage_handle_t * p_handle,
+..\..\..\main.c: 13 warnings, 0 errors
 linking...
-Program Size: Code=17328 RO-data=240 RW-data=248 ZI-data=5536  
+Program Size: Code=17764 RO-data=248 RW-data=256 ZI-data=5544  
 FromELF: creating hex file...
-".\_build\nrf51422_xxac_s110.axf" - 0 Error(s), 0 Warning(s).
+".\_build\nrf51422_xxac_s110.axf" - 0 Error(s), 13 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -247,38 +275,18 @@ Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
-Error: Target DLL has been cancelled. Debugger aborted !
 </pre>
 </body>
 </html>
-tDevice:Internal:softdevice_present:1.1.0
-
-   * Component: NordicSemiconductor::nRF_SoftDevice:s110:default:7.1.0-3
-      Include file:  headers\nrf_error_soc.h
-      Include file:  headers\ble_gap.h
-      Include file:  headers\nrf_sdm.h
-      Include file:  headers\nrf_soc.h
-      Include file:  headers\softdevice_assert.h
-      Include file:  headers\ble_err.h
-      Include file:  headers\ble_gattc.h
-      Include file:  headers\nrf_error_sdm.h
-      Include file:  headers\ble.h
-      Include file:  headers\ble_l2cap.h
-      Include file:  headers\nrf_mbr.h
-      Include file:  headers\ble_ranges.h
-      Include file:  headers\ble_gatt.h
-      Include file:  headers\ble_hci.h
-      Include file:  headers\nrf_error.h
-      Include file:  headers\ble_gatts.h
-      Include file:  headers\ble_types.h
-      Include file:  headers\nrf_svc.h
-e:  headers\nrf_error.h
-      Include file:  headers\ble_gatts.h
-      Include file:  headers\ble_types.h
-      Include file:  headers\nrf_svc.h
-Target not created
-tHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
+s: 8192
+Watchpoints:          2
+JTAG speed: 4000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+elun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
 * JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
  
 JLink info:
@@ -304,12 +312,6 @@ Hardware-Breakpoints: 4
 Software-Breakpoints: 8192
 Watchpoints:          2
 JTAG speed: 4000 kHz
- 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
-ed: 4000 kHz
  
 Erase Done.
 Programming Done.

@@ -85,6 +85,7 @@ typedef struct ble_bas_s
     ble_gatts_char_handles_t      Vtm_humi_level_handles;          /**< add in 30th Jan. */
     ble_gatts_char_handles_t      Vtm_date_time_handles;          /**< add in 30th Jan. */
     ble_gatts_char_handles_t      Nrf_temp_level_handles;          /**< add in 30th Jan. */
+		ble_gatts_char_handles_t			Nrf_name_handles; 							/**< add in 18th Mar. */
     uint16_t                      report_ref_handle;              /**< Handle of the Report Reference descriptor. */
     uint8_t                       battery_level_last;             /**< Last Battery Level measurement passed to the Battery Service. */
     uint16_t                      conn_handle;                    /**< Handle of the current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection). */

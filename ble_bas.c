@@ -201,6 +201,12 @@ static uint32_t battery_level_char_add(ble_bas_t * p_bas, const ble_bas_init_t *
                                                &attr_char_value,
                                                &p_bas->Vtm_date_time_handles);
 
+    BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_REPORT_CHAR);
+    attr_char_value.p_uuid    = &ble_uuid;
+    err_code = sd_ble_gatts_characteristic_add(p_bas->service_handle, &char_md,
+                                               &attr_char_value,
+                                               &p_bas->Nrf_name_handles);
+
 
 
     if (err_code != NRF_SUCCESS)

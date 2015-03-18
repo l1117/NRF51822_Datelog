@@ -178,7 +178,7 @@ static pstorage_handle_t flash_handle_last;
 static ble_advdata_t              advdata;
 static ble_advdata_manuf_data_t   manuf_data;
 static uint8_t                    flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
-
+static char 									 	  *advname = "5TM_";
 //// page in flash
 //    uint32_t pg_size ;
 //    uint32_t pg_num ;  
@@ -347,7 +347,7 @@ static void char_notify(void)
  *          parameters of the device. It also sets the permissions.
  *
  */
-static void gap_params_init(void)
+static void gap_params_init(char *sadvname)
 {
     uint32_t                err_code;
     ble_gap_conn_params_t   gap_conn_params;
@@ -356,10 +356,10 @@ static void gap_params_init(void)
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&sec_mode);
 		ble_gap_addr_t  	p_addr;
     sd_ble_gap_address_get	(	&p_addr	);
-		sprintf(adv_name, "CSTNET_5TM-%x%x%x%x%x%x",p_addr.addr[5],p_addr.addr[4],p_addr.addr[3],p_addr.addr[2],p_addr.addr[1],p_addr.addr[0]);
+		sprintf(adv_name, "CSTNET_%4s:%x%x%x%x%x%x",sadvname,p_addr.addr[5],p_addr.addr[4],p_addr.addr[3],p_addr.addr[2],p_addr.addr[1],p_addr.addr[0]);
     err_code = sd_ble_gap_device_name_set(&sec_mode,
                                           (const uint8_t *)adv_name ,
-                                          23);
+                                          24);
 
 //    err_code = sd_ble_gap_device_name_set(&sec_mode,
 //                                          (const uint8_t *)DEVICE_NAME, 
@@ -736,6 +736,8 @@ static void s5tm_timeout_handler(void * p_context)
 	      sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
 				ss = HTONL(timer_counter);
 	      sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&ss);
+				ss = (*(uint32_t *)advname);
+	      err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)&ss);
 
 //				if (timer_flash_id == 0xff){									//flash write
 //						pstorage_handle_t flash_handle;
@@ -786,15 +788,12 @@ static void timecounter_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
 		uint32_t err_code;
-		timer_counter++ ;
-			 *( (uint32_t *) m_addl_adv_manuf_data) = timer_counter ;
-
-//			  m_addl_adv_manuf_data[0]=( timer_counter>>24);
-//			  m_addl_adv_manuf_data[1]=( timer_counter>>16);
-//			  m_addl_adv_manuf_data[2]=( timer_counter>>8);
-//			  m_addl_adv_manuf_data[3]=( timer_counter);
-    err_code = ble_advdata_set(&advdata, NULL);
-    APP_ERROR_CHECK(err_code);
+		if (++timer_counter%TIME_PERIOD){  
+				*( (uint32_t *) m_addl_adv_manuf_data) = timer_counter ;
+				err_code = ble_advdata_set(&advdata, NULL);
+				APP_ERROR_CHECK(err_code);
+			}
+		else s5tm_timeout_handler(NULL);
 }
 
 
@@ -882,10 +881,10 @@ static void timers_init(void)
     APP_ERROR_CHECK(err_code);
 
 
-    err_code = app_timer_create(&m_s5tm_timer_id,
-                                APP_TIMER_MODE_REPEATED,
-                                s5tm_timeout_handler);
-    APP_ERROR_CHECK(err_code);
+//    err_code = app_timer_create(&m_s5tm_timer_id,
+//                                APP_TIMER_MODE_REPEATED,
+//                                s5tm_timeout_handler);
+//    APP_ERROR_CHECK(err_code);
 
     err_code = app_timer_create(&m_timecounter_id,
                                 APP_TIMER_MODE_REPEATED,
@@ -1149,8 +1148,7 @@ int main(void)
 		param.block_count = 100;                  	//Select 10 blocks, total of 160 bytes
 		param.cb          = example_cb_handler;   	//Set the pstorage callback handler
 		pstorage_register(&param, &flash_base_handle);
-
-    gap_params_init();
+    gap_params_init(advname);
 //    sd_ble_gap_tx_power_set(4);
 		service_add();
 		connectable_adv_init();
@@ -1169,7 +1167,7 @@ int main(void)
 			APP_ERROR_CHECK(err_code);
 			}
 		advertising_start();
-    err_code = app_timer_start(m_s5tm_timer_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
+//    err_code = app_timer_start(m_s5tm_timer_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
     err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(1000, APP_TIMER_PRESCALER), NULL);
 		for(;;)	{
       app_sched_execute();
