@@ -167,7 +167,7 @@ static app_timer_id_t           m_timecounter_id;
 
 //static uint8_t tx_data[522]; /**< SPI TX buffer. */
 //static uint8_t rx_data[522]; /**< SPI RX buffer. */
-//static uint32_t flash_page_data[256];
+static uint32_t flash_page_data[256];
 static uint32_t *spi_base_address;
 static uint16_t spi_flash_pages = 0;
 static uint16_t spi_flash_pages_count = 0;
@@ -205,6 +205,9 @@ static pstorage_handle_t       flash_base_handle;
 
 // Persistent storage system event handler
 void pstorage_sys_event_handler (uint32_t p_evt);
+
+
+static void application_timers_stop(void);
 
 ////////////////////////////////////////////////
 /**@brief Callback function for asserts in the SoftDevice.
@@ -298,7 +301,7 @@ void battery_start(uint32_t AnalogInput)
  */
 static void char_notify(void)
 {
-    uint32_t err_code;
+    uint32_t err_code, *flash_load;
     uint16_t len = APP_CFG_CHAR_LEN;
 
     // Send value if connected and notifying.
@@ -311,22 +314,26 @@ static void char_notify(void)
 				ble_gatts_hvx_params_t hvx_params;
 
         memset(&hvx_params, 0, sizeof(hvx_params));
-//        len = sizeof(uint8_t)*2;  						 //May 20 it the Max length for faster transmit speed.
-//				tx_data[0] = timer_counter;
-//				tx_data[1] = timer_counter >> 8;
-//				tx_data[1] = timer_counter >> 16;
-//				tx_data[0] = timer_counter >> 24;  
         hvx_params.handle   = m_hrs.hrm_handles.value_handle;  //   m_char_handles.value_handle;
         hvx_params.type     = BLE_GATT_HVX_NOTIFICATION;
         hvx_params.offset   = 0;
         hvx_params.p_len    = &len;
-        hvx_params.p_data   = ((uint8_t *) &timer_shifting);  //m_char_value;
+//        hvx_params.p_data   = ((uint8_t *) flash_load);  //m_char_value;
 //    for (uint8_t i =0 ; i<6 ; i++) {
 				err_code = NRF_SUCCESS;
+				pstorage_handle_t flash_handle;
 				while(true){
-					timer_shifting ++;
+					timer_shifting-= 5;
+					hvx_params.p_data   = ((uint8_t *) &flash_page_data[(uint8_t)timer_shifting]);  //m_char_value;
+
 					err_code = sd_ble_gatts_hvx(m_conn_handle, &hvx_params);
-					if ((err_code == BLE_ERROR_NO_TX_BUFFERS) ||
+					if (((uint8_t)timer_shifting)==0) {
+            application_timers_stop();
+            err_code = sd_ble_gap_disconnect(m_conn_handle,
+                                             BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
+            APP_ERROR_CHECK(err_code);
+							}
+					else if ((err_code == BLE_ERROR_NO_TX_BUFFERS) ||
 							(err_code == NRF_ERROR_INVALID_STATE) ||
 							(err_code == BLE_ERROR_GATTS_SYS_ATTR_MISSING)
 					)
@@ -924,7 +931,10 @@ static void on_write(ble_evt_t * p_ble_evt)
 //            APP_ERROR_CHECK(err_code);
 
 //            application_timers_start();
-						timer_shifting = 0;
+						timer_shifting = (timer_counter/5) | 0x000000ff;
+						pstorage_handle_t flash_handle;
+						pstorage_block_identifier_get(&flash_base_handle,((((timer_shifting)>>8))%100), &flash_handle);
+						pstorage_load((uint8_t *)flash_page_data, &flash_handle,1024,0);
             char_notify();
         }
         else
