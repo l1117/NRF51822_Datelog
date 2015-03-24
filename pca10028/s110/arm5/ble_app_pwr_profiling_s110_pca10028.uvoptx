@@ -157,15 +157,31 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>750</LineNumber>
+          <LineNumber>337</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>104142</Address>
+          <Address>96254</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
+          <Filename>C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>351</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
           <Filename>C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\main.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
@@ -217,7 +233,7 @@
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>advname</ItemText>
+          <ItemText>flash_load</ItemText>
         </Mm>
       </MemoryWindow1>
       <Tracepoint>
@@ -288,10 +304,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>28</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>308</TopLine>
-      <CurrentLine>545</CurrentLine>
+      <TopLine>928</TopLine>
+      <CurrentLine>948</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -512,10 +528,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>15</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>38</TopLine>
-      <CurrentLine>45</CurrentLine>
+      <TopLine>256</TopLine>
+      <CurrentLine>200</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_hrs\ble_hrs.c</PathWithFileName>
       <FilenameWithoutPath>ble_hrs.c</FilenameWithoutPath>

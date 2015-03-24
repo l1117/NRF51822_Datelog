@@ -66,7 +66,7 @@ static pstorage_handle_t      m_storage_handle;                                 
 #define APP_CFG_NON_CONN_ADV_TIMEOUT  30                                            /**< Time for which the device must be advertising in non-connectable mode (in seconds). */
 #define APP_CFG_CHAR_NOTIF_TIMEOUT    5000                                          /**< Time for which the device must continue to send notifications once connected to central (in milli seconds). */
 #define APP_CFG_ADV_DATA_LEN          31                                            /**< Required length of the complete advertisement packet. This should be atleast 8 in order to accommodate flag field and other mandatory fields and one byte of manufacturer specific data. */
-#define APP_CFG_CONNECTION_INTERVAL   24                                            /**< Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
+#define APP_CFG_CONNECTION_INTERVAL   10                                            /**24 < Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
 #define APP_CFG_CHAR_LEN              20                                            /**< Size of the characteristic value being notified (in bytes). */
 
 #ifdef BLE_DFU_APP_SUPPORT
@@ -172,7 +172,7 @@ static uint32_t *spi_base_address;
 static uint16_t spi_flash_pages = 0;
 static uint16_t spi_flash_pages_count = 0;
 static uint32_t timer_counter = 0;
-static uint32_t timer_shifting = 0;
+static int32_t timer_shifting = 0;
 static pstorage_handle_t flash_handle_last;
 
 static ble_advdata_t              advdata;
@@ -301,7 +301,7 @@ void battery_start(uint32_t AnalogInput)
  */
 static void char_notify(void)
 {
-    uint32_t err_code, *flash_load;
+    uint32_t err_code,flash_load[5];
     uint16_t len = APP_CFG_CHAR_LEN;
 
     // Send value if connected and notifying.
@@ -318,22 +318,37 @@ static void char_notify(void)
         hvx_params.type     = BLE_GATT_HVX_NOTIFICATION;
         hvx_params.offset   = 0;
         hvx_params.p_len    = &len;
-//        hvx_params.p_data   = ((uint8_t *) flash_load);  //m_char_value;
+        hvx_params.p_data   = (uint8_t *) flash_load;  //m_char_value;
 //    for (uint8_t i =0 ; i<6 ; i++) {
 				err_code = NRF_SUCCESS;
 				pstorage_handle_t flash_handle;
-				while(true){
-					timer_shifting-= 5;
-					hvx_params.p_data   = ((uint8_t *) &flash_page_data[(uint8_t)timer_shifting]);  //m_char_value;
 
-					err_code = sd_ble_gatts_hvx(m_conn_handle, &hvx_params);
-					if (((uint8_t)timer_shifting)==0) {
-            application_timers_stop();
-            err_code = sd_ble_gap_disconnect(m_conn_handle,
-                                             BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
-            APP_ERROR_CHECK(err_code);
+				while(true){
+//					if ((uint8_t)timer_shifting == 0) {
+					if (timer_shifting < 0) {
+//            application_timers_stop();
+						m_is_notifying_enabled =  false;
+//            err_code = sd_ble_gap_disconnect(m_conn_handle,
+//                                             BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
+//            APP_ERROR_CHECK(err_code);
+						break;
 							}
-					else if ((err_code == BLE_ERROR_NO_TX_BUFFERS) ||
+				if ((timer_shifting&0xffffff00)!=((timer_shifting+4)&0xffffff00)){
+//						timer_shifting = (timer_counter/TIME_PERIOD)& 0xfffffffC;  // intergreat /4
+//						pstorage_handle_t flash_handle;
+						pstorage_block_identifier_get(&flash_base_handle,((((timer_shifting)>>8))%100), &flash_handle);
+						pstorage_load((uint8_t *)flash_page_data, &flash_handle,1024,0);
+						}
+//					timer_shifting-= 4;
+					flash_load[0] = timer_shifting * TIME_PERIOD;
+					flash_load[1] = flash_page_data[(uint8_t)timer_shifting];
+					flash_load[2] = flash_page_data[(uint8_t)timer_shifting+1];
+					flash_load[3] = flash_page_data[(uint8_t)timer_shifting+2];
+					flash_load[4] = flash_page_data[(uint8_t)timer_shifting+3];
+//					hvx_params.p_data   = ((uint8_t *) &flash_page_data[(uint8_t)timer_shifting]);  //m_char_value;
+					
+					err_code = sd_ble_gatts_hvx(m_conn_handle, &hvx_params);
+					if ((err_code == BLE_ERROR_NO_TX_BUFFERS) ||
 							(err_code == NRF_ERROR_INVALID_STATE) ||
 							(err_code == BLE_ERROR_GATTS_SYS_ATTR_MISSING)
 					)
@@ -344,6 +359,8 @@ static void char_notify(void)
 							{
 									APP_ERROR_HANDLER(err_code);
 							}
+					else 					timer_shifting-= 4;
+
 					}
 		}
 }
@@ -922,19 +939,12 @@ static void on_write(ble_evt_t * p_ble_evt)
 
         if (m_is_notifying_enabled)
         {
-//						ble_gap_conn_params_t   gap_conn_params;
-//						gap_conn_params.min_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-//						gap_conn_params.max_conn_interval = (4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-//						gap_conn_params.slave_latency     = 0;		//SLAVE_LATENCY;
-//						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(4000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
-//						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
-//            APP_ERROR_CHECK(err_code);
 
-//            application_timers_start();
-						timer_shifting = (timer_counter/5) | 0x000000ff;
+						timer_shifting = (timer_counter/TIME_PERIOD)& 0xfffffffC;  // intergreat /4
 						pstorage_handle_t flash_handle;
 						pstorage_block_identifier_get(&flash_base_handle,((((timer_shifting)>>8))%100), &flash_handle);
 						pstorage_load((uint8_t *)flash_page_data, &flash_handle,1024,0);
+//            application_timers_start();
             char_notify();
         }
         else
@@ -967,7 +977,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						nrf_gpio_pin_set (20);												//Led on.
  
 						ble_gap_conn_params_t   gap_conn_params;
-						gap_conn_params.min_conn_interval = 10; //((4 * APP_CFG_CONNECTION_INTERVAL) / 5)-1;
+						gap_conn_params.min_conn_interval = ((4 * APP_CFG_CONNECTION_INTERVAL) / 5);  //= 10
 						gap_conn_params.max_conn_interval = (4 * 24) / 5;
 						gap_conn_params.slave_latency     = 4;		//SLAVE_LATENCY;
 						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(400, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
@@ -1131,6 +1141,13 @@ static void scheduler_init(void)
 int main(void)
 {
     uint32_t err_code = NRF_SUCCESS;
+		NRF_GPIO->PIN_CNF[20] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+                                            | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
+                                            | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
+                                            | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
+                                            | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
+		nrf_gpio_pin_set (20);												//Led on.
+
 		pstorage_module_param_t		 param;
 //		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_MODE_ON);
 	 	nrf_delay_ms(20);  //There must be 20ms waitting for AT45DB161 ready from power on.
@@ -1140,11 +1157,6 @@ int main(void)
 
 		NRF_GPIO->PIN_CNF[13] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
                                             | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos)
-                                            | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
-                                            | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
-                                            | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
-		NRF_GPIO->PIN_CNF[20] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
-                                            | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
                                             | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
                                             | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
                                             | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
@@ -1179,6 +1191,9 @@ int main(void)
 		advertising_start();
 //    err_code = app_timer_start(m_s5tm_timer_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
     err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(1000, APP_TIMER_PRESCALER), NULL);
+
+		nrf_gpio_pin_clear (20);												//Led off.
+
 		for(;;)	{
       app_sched_execute();
 			power_manage();
