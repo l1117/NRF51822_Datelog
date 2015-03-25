@@ -167,12 +167,12 @@ static app_timer_id_t           m_timecounter_id;
 
 //static uint8_t tx_data[522]; /**< SPI TX buffer. */
 //static uint8_t rx_data[522]; /**< SPI RX buffer. */
-static uint32_t flash_page_data[256];
+static uint32_t flash_page_data[256+4];
 static uint32_t *spi_base_address;
 static uint16_t spi_flash_pages = 0;
 static uint16_t spi_flash_pages_count = 0;
 static uint32_t timer_counter = 0;
-static int32_t timer_shifting = 0;
+static uint32_t timer_shifting = 0;
 static pstorage_handle_t flash_handle_last;
 
 static ble_advdata_t              advdata;
@@ -198,6 +198,7 @@ static ble_dfu_t                             m_dfus;                            
 static uint8_t pstorage_wait_flag = 0;
 static pstorage_block_t pstorage_wait_handle = 0;
 static pstorage_handle_t       flash_base_handle;
+static uint32_t 	flash_block_num;
 // YOUR_JOB: Modify these according to requirements (e.g. if other event types are to pass through
 //           the scheduler).
 #define SCHED_MAX_EVENT_DATA_SIZE       sizeof(app_timer_event_t)                   /**< Maximum size of scheduler events. Note that scheduler BLE stack events do not contain any data, as the events are being pulled from the stack in the event handler. */
@@ -208,6 +209,7 @@ void pstorage_sys_event_handler (uint32_t p_evt);
 
 
 static void application_timers_stop(void);
+static void application_timers_start(void);
 
 ////////////////////////////////////////////////
 /**@brief Callback function for asserts in the SoftDevice.
@@ -301,52 +303,25 @@ void battery_start(uint32_t AnalogInput)
  */
 static void char_notify(void)
 {
-    uint32_t err_code,flash_load[5];
+    uint32_t err_code;
     uint16_t len = APP_CFG_CHAR_LEN;
+		err_code = NRF_SUCCESS;
 
     // Send value if connected and notifying.
     if ((m_conn_handle != BLE_CONN_HANDLE_INVALID) && m_is_notifying_enabled)
     {
-//				tx_data[0]=0xAB;
-//				spi_master_tx_rx(spi_base_address, 1, (const uint8_t *)tx_data, rx_data);
-
-
-				ble_gatts_hvx_params_t hvx_params;
-
+				ble_gatts_hvx_params_t 		hvx_params;
         memset(&hvx_params, 0, sizeof(hvx_params));
         hvx_params.handle   = m_hrs.hrm_handles.value_handle;  //   m_char_handles.value_handle;
+//        hvx_params.handle   = m_bas.battery_level_handles.value_handle;  //   m_char_handles.value_handle;
         hvx_params.type     = BLE_GATT_HVX_NOTIFICATION;
         hvx_params.offset   = 0;
         hvx_params.p_len    = &len;
-        hvx_params.p_data   = (uint8_t *) flash_load;  //m_char_value;
-//    for (uint8_t i =0 ; i<6 ; i++) {
-				err_code = NRF_SUCCESS;
+//        hvx_params.p_data   = (uint8_t *) flash_load;  //m_char_value;
 				pstorage_handle_t flash_handle;
 
 				while(true){
-//					if ((uint8_t)timer_shifting == 0) {
-					if (timer_shifting < 0) {
-//            application_timers_stop();
-						m_is_notifying_enabled =  false;
-//            err_code = sd_ble_gap_disconnect(m_conn_handle,
-//                                             BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
-//            APP_ERROR_CHECK(err_code);
-						break;
-							}
-				if ((timer_shifting&0xffffff00)!=((timer_shifting+4)&0xffffff00)){
-//						timer_shifting = (timer_counter/TIME_PERIOD)& 0xfffffffC;  // intergreat /4
-//						pstorage_handle_t flash_handle;
-						pstorage_block_identifier_get(&flash_base_handle,((((timer_shifting)>>8))%100), &flash_handle);
-						pstorage_load((uint8_t *)flash_page_data, &flash_handle,1024,0);
-						}
-//					timer_shifting-= 4;
-					flash_load[0] = timer_shifting * TIME_PERIOD;
-					flash_load[1] = flash_page_data[(uint8_t)timer_shifting];
-					flash_load[2] = flash_page_data[(uint8_t)timer_shifting+1];
-					flash_load[3] = flash_page_data[(uint8_t)timer_shifting+2];
-					flash_load[4] = flash_page_data[(uint8_t)timer_shifting+3];
-//					hvx_params.p_data   = ((uint8_t *) &flash_page_data[(uint8_t)timer_shifting]);  //m_char_value;
-					
+					hvx_params.p_data   = ((uint8_t *) &flash_page_data[(uint8_t)timer_shifting]);  //m_char_value;
 					err_code = sd_ble_gatts_hvx(m_conn_handle, &hvx_params);
 					if ((err_code == BLE_ERROR_NO_TX_BUFFERS) ||
 							(err_code == NRF_ERROR_INVALID_STATE) ||
@@ -359,8 +334,15 @@ static void char_notify(void)
 							{
 									APP_ERROR_HANDLER(err_code);
 							}
-					else 					timer_shifting-= 4;
-
+					else 	if (timer_shifting > 254)
+							{
+								m_is_notifying_enabled =  false;
+								application_timers_start();
+								break;
+							}
+					else {
+									timer_shifting += 5;
+								}
 					}
 		}
 }
@@ -389,17 +371,6 @@ static void gap_params_init(char *sadvname)
 //                                          (const uint8_t *)DEVICE_NAME, 
 //                                          strlen(DEVICE_NAME));
     APP_ERROR_CHECK(err_code);
-    
-//    memset(&gap_conn_params, 0, sizeof(gap_conn_params));
-
-//    // Set GAP Peripheral Preferred Connection Parameters (converting connection interval from
-//    // milliseconds to required unit of 1.25ms).
-//		gap_conn_params.min_conn_interval = MSEC_TO_UNITS(500, UNIT_1_25_MS) ;	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-//		gap_conn_params.max_conn_interval =  MSEC_TO_UNITS(1000, UNIT_1_25_MS);	//(4 * APP_CFG_CONNECTION_INTERVAL) / 5;
-//		gap_conn_params.slave_latency     = 0;		//SLAVE_LATENCY;
-//		gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(4000, UNIT_10_MS) ;	//CONN_SUP_TIMEOUT;
-//    err_code = sd_ble_gap_ppcp_set(&gap_conn_params);
-//    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -611,7 +582,7 @@ static void service_add(void)
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_report_read_perm);
 
     bas_init.evt_handler          = NULL;
-    bas_init.support_notification = false; //true;
+    bas_init.support_notification = false;  //true;
     bas_init.p_report_ref         = NULL;
     bas_init.initial_batt_level   = 100;
 
@@ -834,10 +805,10 @@ static void application_timers_start(void)
     uint32_t err_code;
 
     // Start connection interval timer.     
-    err_code = app_timer_start(m_conn_int_timer_id,
-                               APP_TIMER_TICKS(APP_CFG_CONNECTION_INTERVAL, APP_TIMER_PRESCALER),
-                               NULL);
-    APP_ERROR_CHECK(err_code);
+//    err_code = app_timer_start(m_conn_int_timer_id,
+//                               APP_TIMER_TICKS(APP_CFG_CONNECTION_INTERVAL, APP_TIMER_PRESCALER),
+//                               NULL);
+//    APP_ERROR_CHECK(err_code);
 
     // Start characteristic notification timer.
     err_code = app_timer_start(m_notif_timer_id, CHAR_NOTIF_TIMEOUT_IN_TKS, NULL);
@@ -854,8 +825,8 @@ static void application_timers_stop(void)
     err_code = app_timer_stop(m_notif_timer_id);
     APP_ERROR_CHECK(err_code);
 
-    err_code = app_timer_stop(m_conn_int_timer_id);
-    APP_ERROR_CHECK(err_code);
+//    err_code = app_timer_stop(m_conn_int_timer_id);
+//    APP_ERROR_CHECK(err_code);
 
 //    err_code = app_timer_create(&m_s5tm_timer_id,
 //                                APP_TIMER_MODE_REPEATED,
@@ -930,34 +901,23 @@ static void on_write(ble_evt_t * p_ble_evt)
 {
 		uint32_t err_code;
     ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
-
-//    if ((p_evt_write->handle == m_char_handles.cccd_handle) && (p_evt_write->len == 2))
     if ((p_evt_write->handle == m_hrs.hrm_handles.cccd_handle) && (p_evt_write->len == 2))
+//    if ((p_evt_write->handle == m_bas.battery_level_handles.cccd_handle) && (p_evt_write->len == 2))
     {
         // CCCD written. Start notifications
         m_is_notifying_enabled = ble_srv_is_notification_enabled(p_evt_write->data);
 
         if (m_is_notifying_enabled)
         {
-
-						timer_shifting = (timer_counter/TIME_PERIOD)& 0xfffffffC;  // intergreat /4
+						application_timers_stop();
+//						timer_shifting = (timer_counter/TIME_PERIOD)& 0xfffffffC;  // intergreat /4
+						timer_shifting = 0;
 						pstorage_handle_t flash_handle;
-						pstorage_block_identifier_get(&flash_base_handle,((((timer_shifting)>>8))%100), &flash_handle);
+						pstorage_block_identifier_get(&flash_base_handle,flash_block_num++, &flash_handle);
 						pstorage_load((uint8_t *)flash_page_data, &flash_handle,1024,0);
-//            application_timers_start();
             char_notify();
+						application_timers_start();
         }
-        else
-        {
-            application_timers_stop();
-            err_code = sd_ble_gap_disconnect(m_conn_handle,
-                                             BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
-            APP_ERROR_CHECK(err_code);
-
-        }
-
-
-
     }
 }
 
@@ -975,7 +935,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
         case BLE_GAP_EVT_CONNECTED:
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 						nrf_gpio_pin_set (20);												//Led on.
- 
+						application_timers_start();
 						ble_gap_conn_params_t   gap_conn_params;
 						gap_conn_params.min_conn_interval = ((4 * APP_CFG_CONNECTION_INTERVAL) / 5);  //= 10
 						gap_conn_params.max_conn_interval = (4 * 24) / 5;
@@ -987,6 +947,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 //						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(1330, UNIT_10_MS) ;	//Interval Max * (Slave Latency + 1) * 3 < connSupervisionTimeout
 						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
             APP_ERROR_CHECK(err_code);
+						flash_block_num = ((timer_shifting)>>8)%100;
+
             break;
 
         case BLE_EVT_TX_COMPLETE:
