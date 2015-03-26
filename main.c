@@ -188,6 +188,8 @@ static char 									 	  *advname = "5TM_";
 //		uint16_t delay_i;
 #define TIME_PERIOD	 5        /*5TM time period in seconds*/
 //#define START_ADDRESS 0x1B000	  /*Data recordes start address, 12KB program flash from 0x160005*/
+static uint16_t Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;  //sensor data;
+static int32_t nrf_temp=0;
 
 static bool                                  m_memory_access_in_progress = false;       /**< Flag to keep track of ongoing operations on persistent memory. */
 
@@ -558,11 +560,12 @@ static void service_add(void)
 
     hrs_init.evt_handler                 = NULL;
     hrs_init.is_sensor_contact_supported = true;
-    hrs_init.p_body_sensor_location      = &body_sensor_location;
+    hrs_init.p_body_sensor_location      = NULL; //&body_sensor_location;
 
     // Here the sec level for the Heart Rate Service can be changed/increased.
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&hrs_init.hrs_hrm_attr_md.cccd_write_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&hrs_init.hrs_hrm_attr_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&hrs_init.hrs_hrm_attr_md.read_perm);
+//    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&hrs_init.hrs_hrm_attr_md.read_perm);
     BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&hrs_init.hrs_hrm_attr_md.write_perm);
 
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&hrs_init.hrs_bsl_attr_md.read_perm);
@@ -675,7 +678,8 @@ static void s5tm_timeout_handler(void * p_context)
 		uint8_t data_id = 0;
     uint32_t err_code=0;
 		uint8_t timer_flash_id = ((uint8_t)( timer_counter/TIME_PERIOD));
-		uint16_t Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
+//		uint16_t Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
+//		int32_t nrf_temp=0;
 		uint16_t len = 4;
 //		timer_counter+=TIME_PERIOD;
 				battery_start(4);	 //For 3.3V boster
@@ -719,29 +723,22 @@ static void s5tm_timeout_handler(void * p_context)
 //				flash_page_data[timer_flash_id] = timer_counter ; //test flash write
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
 				nrf_gpio_pin_clear (13);
-				int32_t nrf_temp,ss ;
 				sd_temp_get(&nrf_temp);  													//Get Cpu tempreature
-				ss = HTONL(batt_lvl_in_milli_volts);
-        sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-				ss = HTONL(Vtm_temp);
-	      sd_ble_gatts_value_set(m_bas.Vtm_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-				ss = HTONL(Vtm_humi);
-	      sd_ble_gatts_value_set(m_bas.Vtm_humi_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-				ss = HTONL(nrf_temp);
-	      sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-				ss = HTONL(timer_counter);
-	      sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&ss);
-				ss = (*(uint32_t *)advname);
-	      err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)&ss);
+//				int32_t ss ;
+//				ss = HTONL(batt_lvl_in_milli_volts);
+//        sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+//				ss = HTONL(Vtm_temp);
+//	      sd_ble_gatts_value_set(m_bas.Vtm_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+//				ss = HTONL(Vtm_humi);
+//	      sd_ble_gatts_value_set(m_bas.Vtm_humi_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+//				ss = HTONL(nrf_temp);
+//	      sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+//				ss = HTONL(timer_counter);
+//	      sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&ss);
+//				ss = (*(uint32_t *)advname);
+//	      err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)&ss);
 
-//				if (timer_flash_id == 0xff){									//flash write
-//						pstorage_handle_t flash_handle;
-//						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8)-1)%100), &flash_handle);
-//						err_code = pstorage_clear(&flash_handle,1024);
-//						err_code = pstorage_store(&flash_handle, (uint8_t * ) flash_page_data, 1024, 0);
-//						}
 						pstorage_handle_t flash_handle;
-//						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8)-1)%100), &flash_handle);
 						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%100), &flash_handle);
 						if (flash_handle.block_id != flash_handle_last.block_id || flash_handle.module_id != flash_handle_last.module_id) {
 								flash_handle_last = flash_handle;
@@ -756,24 +753,6 @@ static void s5tm_timeout_handler(void * p_context)
 			 *( (uint16_t *) (m_addl_adv_manuf_data+10)) = batt_lvl_in_milli_volts ;
 			 *( (uint32_t *) (m_addl_adv_manuf_data+12)) = nrf_temp ;
 
-/*			 m_addl_adv_manuf_data[4]=( Vtm_temp>>8);
-			  m_addl_adv_manuf_data[5]=( Vtm_temp);
-			  m_addl_adv_manuf_data[6]=( Vtm_unknow>>8);
-			  m_addl_adv_manuf_data[7]=( Vtm_unknow);
-			  m_addl_adv_manuf_data[8]=( Vtm_humi>>8);
-			  m_addl_adv_manuf_data[9]=( Vtm_humi);
-			  m_addl_adv_manuf_data[10]=( batt_lvl_in_milli_volts>>8);
-        m_addl_adv_manuf_data[11]=(batt_lvl_in_milli_volts);
-				m_addl_adv_manuf_data[12]=(nrf_temp>>24);
-				m_addl_adv_manuf_data[13]=(nrf_temp>>16);
-				m_addl_adv_manuf_data[14]=(nrf_temp>>8);
-				m_addl_adv_manuf_data[15]=(nrf_temp);
-*/
-//				len=20;
-//				err_code = sd_ble_gatts_value_set(m_char_handles.value_handle,
-//																							0,
-//																							&len,
-//																							m_addl_adv_manuf_data);
 
     err_code = ble_advdata_set(&advdata, NULL);
     APP_ERROR_CHECK(err_code);
@@ -948,6 +927,21 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
             APP_ERROR_CHECK(err_code);
 						flash_block_num = ((timer_shifting)>>8)%100;
+// Updata server data for display  
+						uint32_t ss;
+						uint16_t len = 4;
+						ss = HTONL(batt_lvl_in_milli_volts);
+						sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+						ss = HTONL(Vtm_temp);
+						sd_ble_gatts_value_set(m_bas.Vtm_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+						ss = HTONL(Vtm_humi);
+						sd_ble_gatts_value_set(m_bas.Vtm_humi_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+						ss = HTONL(nrf_temp);
+						sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+						ss = HTONL(timer_counter);
+						sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&ss);
+						ss = (*(uint32_t *)advname);
+						err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)&ss);
 
             break;
 
