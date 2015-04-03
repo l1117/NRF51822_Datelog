@@ -110,7 +110,8 @@ static pstorage_handle_t      m_storage_handle;                                 
 #define ADV_ENCODED_FLAGS_LEN         (ADV_ENCODED_AD_TYPE_LEN +       \
                                        ADV_ENCODED_AD_TYPE_LEN_LEN +   \
                                        ADV_FLAGS_LEN)                               /**< Length of flags field in advertisement packet. (1 byte for encoded ad type plus 1 byte for length of flags plus the length of the flags itself). */
-#define ADV_ENCODED_COMPANY_ID_LEN    2                                             /**< Length of the encoded Company Identifier in the Manufacturer Specific Data part of the advertisement data. */
+#define ADV_ENCODED_COMPANY_ID_LEN    2     
+#define BLE_ADVDATA_SHORT_NAME_LEN     4                                   /**< Length of the encoded Company Identifier in the Manufacturer Specific Data part of the advertisement data. */
 #define ADV_ADDL_MANUF_DATA_LEN       (APP_CFG_ADV_DATA_LEN -                \
                                        (                                     \
                                            ADV_ENCODED_FLAGS_LEN +           \
@@ -415,6 +416,8 @@ static void advertising_data_init(void)
     manuf_data.company_identifier = COMPANY_IDENTIFIER;
     manuf_data.data.size          = ADV_ADDL_MANUF_DATA_LEN;
     manuf_data.data.p_data        = m_addl_adv_manuf_data;
+		advdata.name_type							= BLE_ADVDATA_SHORT_NAME;
+		advdata.short_name_len				= 8;
     advdata.flags.size            = sizeof(flags);
     advdata.flags.p_data          = &flags;
     advdata.p_manuf_specific_data = &manuf_data;
@@ -692,7 +695,6 @@ static void s5tm_timeout_handler(void * p_context)
 				simple_uart_config(NULL, 10, NULL, 12, false);
 				uint8_t cr,rx_count=10;
 				Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
-//				scanf("%d %d %d\r", &Vtm_humi,&Vtm_unknow,&Vtm_temp);
 				for (uint8_t i=0;i<50;i++){										//Get date from 5tm 
 //						m_addl_adv_manuf_data[rx_count++]=cr;  //simple_uart_put(cr);
 
@@ -1138,10 +1140,12 @@ int main(void)
 			APP_ERROR_CHECK_BOOL(sizeof(flags) == ADV_FLAGS_LEN);  // Assert that these two values of the same.
 			// Build and set advertising data
 			memset(&advdata, 0, sizeof(advdata));
-			*( (uint32_t *) (m_addl_adv_manuf_data+20)) = *(uint32_t *) advname;
+			*( (uint32_t *) (m_addl_adv_manuf_data+16)) = *(uint32_t *) advname;
 			manuf_data.company_identifier = COMPANY_IDENTIFIER;
 			manuf_data.data.size          = ADV_ADDL_MANUF_DATA_LEN;
 			manuf_data.data.p_data        = m_addl_adv_manuf_data;
+//			advdata.name_type							= BLE_ADVDATA_SHORT_NAME;
+//			advdata.short_name_len				= BLE_ADVDATA_SHORT_NAME_LEN;
 			advdata.flags.size            = sizeof(flags);
 			advdata.flags.p_data          = &flags;
 			advdata.p_manuf_specific_data = &manuf_data;
