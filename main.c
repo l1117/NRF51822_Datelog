@@ -136,7 +136,7 @@ static pstorage_handle_t      m_storage_handle;                                 
     #error "The required length of additional manufacturer specific data computed based on the user configured values is computed to be less than 1. Consider increasing the value of APP_CFG_ADV_DATA_LEN."
 #endif
 
-#define COMPANY_IDENTIFIER            0x0059                                        /**< Company identifier for Nordic Semiconductor ASA as per www.bluetooth.org. */
+#define COMPANY_IDENTIFIER            0x5881                                        /**< 0x0059 Company identifier for Nordic Semiconductor ASA as per www.bluetooth.org. */
 
 #define LOCAL_SERVICE_UUID            0x1523                                        /**< Proprietary UUID for local service. */
 #define LOCAL_CHAR_UUID               0x1524                                        /**< Proprietary UUID for local characteristic. */
@@ -585,7 +585,7 @@ static void service_add(void)
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_report_read_perm);
 
     bas_init.evt_handler          = NULL;
-    bas_init.support_notification = false;  //true;
+    bas_init.support_notification = true;
     bas_init.p_report_ref         = NULL;
     bas_init.initial_batt_level   = 100;
 
@@ -675,7 +675,7 @@ static void example_cb_handler(pstorage_handle_t  * handle,
 static void s5tm_timeout_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
-		uint8_t data_id = 0;
+		uint8_t data_id = 0, data_pos = false;
     uint32_t err_code=0;
 		uint8_t timer_flash_id = ((uint8_t)( timer_counter/TIME_PERIOD));
 //		uint16_t Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
@@ -691,12 +691,14 @@ static void s5tm_timeout_handler(void * p_context)
 				NRF_UART0->POWER = (UART_POWER_POWER_Enabled << UART_POWER_POWER_Pos);
 				simple_uart_config(NULL, 10, NULL, 12, false);
 				uint8_t cr,rx_count=10;
+				Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
+//				scanf("%d %d %d\r", &Vtm_humi,&Vtm_unknow,&Vtm_temp);
 				for (uint8_t i=0;i<50;i++){										//Get date from 5tm 
-					if (simple_uart_get_with_timeout(4, &cr)){
 //						m_addl_adv_manuf_data[rx_count++]=cr;  //simple_uart_put(cr);
-						if ((cr == 0x20) ||(cr == 0x0D)) data_id++;
-						else {
-							if ((cr >> 4) == 3 ){
+
+					if (simple_uart_get_with_timeout(4, &cr)) {
+							if (cr == 0x20) data_pos = true;    //5TM data start postion.
+							if ((cr>>4) == 3 ) { 
 								switch (data_id){
 									case 1: {
 										Vtm_humi = Vtm_humi<<4;
@@ -716,9 +718,9 @@ static void s5tm_timeout_handler(void * p_context)
 									default: break;
 								}
 							}
-						}
+						else if(data_pos) data_id++;
 					}
-				}
+		}	
 //				flash_page_data[timer_flash_id] = (Vtm_humi << 16) + Vtm_temp ;
 //				flash_page_data[timer_flash_id] = timer_counter ; //test flash write
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
@@ -1126,6 +1128,7 @@ int main(void)
 		param.block_count = 100;                  	//Select 10 blocks, total of 160 bytes
 		param.cb          = example_cb_handler;   	//Set the pstorage callback handler
 		pstorage_register(&param, &flash_base_handle);
+
     gap_params_init(advname);
 //    sd_ble_gap_tx_power_set(4);
 		service_add();
@@ -1135,6 +1138,7 @@ int main(void)
 			APP_ERROR_CHECK_BOOL(sizeof(flags) == ADV_FLAGS_LEN);  // Assert that these two values of the same.
 			// Build and set advertising data
 			memset(&advdata, 0, sizeof(advdata));
+			*( (uint32_t *) (m_addl_adv_manuf_data+20)) = *(uint32_t *) advname;
 			manuf_data.company_identifier = COMPANY_IDENTIFIER;
 			manuf_data.data.size          = ADV_ADDL_MANUF_DATA_LEN;
 			manuf_data.data.p_data        = m_addl_adv_manuf_data;
