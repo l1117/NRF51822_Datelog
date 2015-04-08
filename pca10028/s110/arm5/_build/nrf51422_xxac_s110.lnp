@@ -7,7 +7,6 @@
 ".\_build\ble_srv_common.o"
 ".\_build\ble_advdata.o"
 ".\_build\ble_conn_params.o"
-".\_build\ble_hrs.o"
 ".\_build\ble_dfu.o"
 ".\_build\device_manager_peripheral.o"
 ".\_build\nrf_delay.o"

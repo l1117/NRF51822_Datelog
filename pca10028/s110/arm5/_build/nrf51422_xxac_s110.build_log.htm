@@ -15,16 +15,16 @@ compiling main.c...
       ble_gap_conn_params_t   gap_conn_params;
 ..\..\..\main.c(545): warning:  #223-D: function "ble_conn_params_stop" declared implicitly
       err_code = ble_conn_params_stop();
-..\..\..\main.c(557): warning:  #550-D: variable "body_sensor_location" was set but never used
-      uint8_t        body_sensor_location;
-..\..\..\main.c(686): warning:  #177-D: variable "len" was declared but never referenced
+..\..\..\main.c(560): warning:  #177-D: variable "init_len" was declared but never referenced
+      uint8_t             init_len;
+..\..\..\main.c(752): warning:  #177-D: variable "len" was declared but never referenced
                 uint16_t len = 4;
-..\..\..\main.c(696): warning:  #177-D: variable "rx_count" was declared but never referenced
+..\..\..\main.c(762): warning:  #177-D: variable "rx_count" was declared but never referenced
                                 uint8_t cr,rx_count=10;
-..\..\..\main.c(885): warning:  #177-D: variable "err_code" was declared but never referenced
+..\..\..\main.c(951): warning:  #177-D: variable "err_code" was declared but never referenced
                 uint32_t err_code;
-..\..\..\main.c(916): warning:  #546-D: transfer of control bypasses initialization of:
-            variable "len" (declared at line 936)
+..\..\..\main.c(982): warning:  #546-D: transfer of control bypasses initialization of:
+            variable "len" (declared at line 1002)
       switch (p_ble_evt->header.evt_id)
       ^
 ..\..\..\main.c(59): warning:  #177-D: variable "m_storage_handle" was declared but never referenced
@@ -43,11 +43,11 @@ compiling main.c...
   static void advertising_data_init(void)
 ..\..\..\main.c(437): warning:  #177-D: function "char_add" was declared but never referenced
   static void char_add(const uint8_t uuid_type)
-..\..\..\main.c(1084): warning:  #177-D: function "dm_pstorage_cb_handler" was declared but never referenced
+..\..\..\main.c(1150): warning:  #177-D: function "dm_pstorage_cb_handler" was declared but never referenced
   static void dm_pstorage_cb_handler(pstorage_handle_t * p_handle,
 ..\..\..\main.c: 17 warnings, 0 errors
 linking...
-Program Size: Code=18252 RO-data=248 RW-data=272 ZI-data=6584  
+Program Size: Code=17028 RO-data=248 RW-data=272 ZI-data=6504  
 FromELF: creating hex file...
 ".\_build\nrf51422_xxac_s110.axf" - 0 Error(s), 17 Warning(s).
 
@@ -67,7 +67,6 @@ Package Vendor: NordicSemiconductor
    * Component: ble_advdata Version: 1.1.0
    * Component: ble_conn_params Version: 1.1.0
    * Component: ble_service_common Version: 1.1.0
-   * Component: ble_hrs Version: 1.1.0
    * Component: device_manager Variant: Peripheral Version: 1.1.0
    * Component: ble_common Version: 1.1.0
 
@@ -122,7 +121,6 @@ Package Vendor: NordicSemiconductor
   C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA
   C:\Keil_v5\ARM\PACK\ARM\CMSIS\3.20.4\CMSIS\Include
   C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_dfu
-  C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_hrs
   C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\common
   C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\device_manager
   C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\1.1.4\Device\Include
@@ -158,10 +156,6 @@ Package Vendor: NordicSemiconductor
    * Component: NordicSemiconductor::nRF_BLE:BLE_Modules:ble_service_common:1.1.0
       Source file:   common\ble_srv_common.c
       Include file:  common\ble_srv_common.h
-
-   * Component: NordicSemiconductor::nRF_BLE:BLE_Services:ble_hrs:1.1.0
-      Source file:   ble_services\ble_hrs\ble_hrs.c
-      Include file:  ble_services\ble_hrs\ble_hrs.h
 
    * Component: NordicSemiconductor::nRF_BLE:BLE_Modules:device_manager:Peripheral:1.1.0
       Include file:  device_manager\device_manager.h
@@ -253,40 +247,17 @@ Package Vendor: NordicSemiconductor
       Include file:  headers\ble_gatts.h
       Include file:  headers\ble_types.h
       Include file:  headers\nrf_svc.h
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x0BB11477
-* JLink Info: Found Cortex-M0 r0p0, Little endian.
-* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: nRF51822_xxAA
-VTarget = 3.306V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 4
-Software-Breakpoints: 8192
-Watchpoints:          2
-JTAG speed: 4000 kHz
- 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Error: Flash Download failed  -  Target DLL has been cancelled
+</pre>
+</body>
+</html>
+ude file:  headers\ble_hci.h
+      Include file:  headers\nrf_error.h
+      Include file:  headers\ble_gatts.h
+      Include file:  headers\ble_types.h
+      Include file:  headers\nrf_svc.h
+Target not created
+ers\ble_types.h
+      Include file:  headers\nrf_svc.h
 Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
 Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
 * JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
@@ -319,78 +290,24 @@ Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
-</pre>
-</body>
-</html>
-nkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x0BB11477
-* JLink Info: Found Cortex-M0 r0p0, Little endian.
-* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: nRF51822_xxAA
-VTarget = 3.921V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 4
-Software-Breakpoints: 8192
+akpoints: 8192
 Watchpoints:          2
 JTAG speed: 4000 kHz
  
-Erase Failed!
-Error: Flash Download failed  -  "Cortex-M0"
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x0BB11477
-* JLink Info: Found Cortex-M0 r0p0, Little endian.
-* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: nRF51822_xxAA
-VTarget = 3.908V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 4
-Software-Breakpoints: 8192
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+
+e-Breakpoints: 8192
 Watchpoints:          2
 JTAG speed: 4000 kHz
  
-Erase Failed!
-Error: Flash Download failed  -  "Cortex-M0"
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
  
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
 Feature(s) : RDI,FlashDL,FlashBP,JFlash 
  
 * JLink Info: Found SWD-DP with ID 0x0BB11477
@@ -401,67 +318,7 @@ ROMTableAddr = 0xE00FF003
 Target info:
 ------------
 Device: nRF51822_xxAA
-VTarget = 3.914V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 4
-Software-Breakpoints: 8192
-Watchpoints:          2
-JTAG speed: 4000 kHz
- 
-Erase Failed!
-Error: Flash Download failed  -  "Cortex-M0"
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x0BB11477
-* JLink Info: Found Cortex-M0 r0p0, Little endian.
-* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: nRF51822_xxAA
-VTarget = 3.914V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 4
-Software-Breakpoints: 8192
-Watchpoints:          2
-JTAG speed: 4000 kHz
- 
-Erase Failed!
-Error: Flash Download failed  -  "Cortex-M0"
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x0BB11477
-* JLink Info: Found Cortex-M0 r0p0, Little endian.
-* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: nRF51822_xxAA
-VTarget = 3.319V
+VTarget = 3.313V
 State of Pins: 
 TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
 Hardware-Breakpoints: 4
@@ -473,3 +330,33 @@ Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
+t never referenced
+                uint16_t len = 4;
+..\..\..\main.c(696): warning:  #177-D: variable "rx_count" was declared but never referenced
+                                uint8_t cr,rx_count=10;
+..\..\..\main.c(885): warning:  #177-D: variable "err_code" was declared but never referenced
+                uint32_t err_code;
+..\..\..\main.c(916): warning:  #546-D: transfer of control bypasses initialization of:
+            variable "len" (declared at line 936)
+      switch (p_ble_evt->header.evt_id)
+      ^
+..\..\..\main.c(59): warning:  #177-D: variable "m_storage_handle" was declared but never referenced
+  static pstorage_handle_t      m_storage_handle;                                     /**< Persistent storage handle for blocks requested by the module. */
+..\..\..\main.c(148): warning:  #177-D: variable "m_base_uuid128" was declared but never referenced
+  static const ble_uuid128_t m_base_uuid128 =
+..\..\..\main.c(166): warning:  #177-D: variable "m_s5tm_timer_id" was declared but never referenced
+  static app_timer_id_t           m_s5tm_timer_id;  
+..\..\..\main.c(173): warning:  #177-D: variable "spi_flash_pages" was declared but never referenced
+  static uint16_t spi_flash_pages = 0;
+..\..\..\main.c(174): warning:  #177-D: variable "spi_flash_pages_count" was declared but never referenced
+  static uint16_t spi_flash_pages_count = 0;
+..\..\..\main.c(201): warning:  #550-D: variable "pstorage_wait_flag" was set but never used
+  static uint8_t pstorage_wait_flag = 0;
+..\..\..\main.c(404): warning:  #177-D: function "advertising_data_init" was declared but never referenced
+  static void advertising_data_init(void)
+..\..\..\main.c(437): warning:  #177-D: function "char_add" was declared but never referenced
+  static void char_add(const uint8_t uuid_type)
+..\..\..\main.c(1084): warning:  #177-D: function "dm_pstorage_cb_handler" was declared but never referenced
+  static void dm_pstorage_cb_handler(pstorage_handle_t * p_handle,
+..\..\..\main.c: 17 warnings, 0 errors
+"..\..\..\main.c" - 0 Error(s), 17 Warning(s).

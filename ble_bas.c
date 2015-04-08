@@ -140,8 +140,12 @@ static uint32_t battery_level_char_add(ble_bas_t * p_bas, const ble_bas_init_t *
         cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
     }
 
-    memset(&char_md, 0, sizeof(char_md));
 
+
+
+
+    memset(&char_md, 0, sizeof(char_md));
+//		char_md.char_props.broadcast = 1;
     char_md.char_props.read   = 1;
     char_md.char_props.notify = (p_bas->is_notification_supported) ? 1 : 0;
     char_md.p_char_user_desc  = NULL;
@@ -149,6 +153,9 @@ static uint32_t battery_level_char_add(ble_bas_t * p_bas, const ble_bas_init_t *
     char_md.p_user_desc_md    = NULL;
     char_md.p_cccd_md         = (p_bas->is_notification_supported) ? &cccd_md : NULL;
     char_md.p_sccd_md         = NULL;
+//		char_md.p_sccd_md = &cccd_md;
+//    char_md.char_props.write   = 1;
+//    char_md.p_sccd_md->vloc       = BLE_GATTS_VLOC_STACK;
 
     BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_BATTERY_LEVEL_CHAR);
 
@@ -175,7 +182,13 @@ static uint32_t battery_level_char_add(ble_bas_t * p_bas, const ble_bas_init_t *
     err_code = sd_ble_gatts_characteristic_add(p_bas->service_handle, &char_md,
                                                &attr_char_value,
                                                &p_bas->battery_level_handles);
-
+//        uint16_t len=2;
+//        uint8_t  s=1;
+//        err_code = sd_ble_gatts_value_set(p_bas->battery_level_handles.sccd_handle,
+//                                          0,
+//                                          &len,
+//                                          &s);
+//		char_md.char_props.broadcast = 0;
     BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_TEMPERATURE_MEASUREMENT_CHAR);
     attr_char_value.p_uuid    = &ble_uuid;
     err_code = sd_ble_gatts_characteristic_add(p_bas->service_handle, &char_md,

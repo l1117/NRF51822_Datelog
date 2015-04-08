@@ -55,7 +55,6 @@
 .\_build\main.o: ..\..\..\spi_master.h
 .\_build\main.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Drivers\nRF51822_xxAA\simple_uart.h
 .\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Drivers\1.2.0\hal\nrf_temp.h
-.\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_hrs\ble_hrs.h
 .\_build\main.o: ..\..\..\ble_bas.h
 .\_build\main.o: ..\..\..\nrf_delay.h
 .\_build\main.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Drivers\nRF51822_xxAA\pstorage.h

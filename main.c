@@ -48,11 +48,11 @@
 #include "spi_master.h"
 #include "simple_uart.h"
 #include "nrf_temp.h"
-#include "ble_hrs.h"
+//#include "ble_hrs.h"
 //#include "ble_dis.h"
 #include "ble_bas.h"
 static ble_bas_t                             m_bas;                                     /**< Structure used to identify the battery service. */
-static ble_hrs_t                             m_hrs;      
+//static ble_hrs_t                             m_hrs;      
 #include "nrf_delay.h"
 #include "pstorage.h"
 //static bool                                  m_memory_access_in_progress = false;       /**< Flag to keep track of ongoing operations on persistent memory. */
@@ -64,7 +64,7 @@ static pstorage_handle_t      m_storage_handle;                                 
 //      The following values shall be altered when doing power profiling.
 
 #define APP_CFG_NON_CONN_ADV_TIMEOUT  30                                            /**< Time for which the device must be advertising in non-connectable mode (in seconds). */
-#define APP_CFG_CHAR_NOTIF_TIMEOUT    5000                                          /**< Time for which the device must continue to send notifications once connected to central (in milli seconds). */
+#define APP_CFG_CHAR_NOTIF_TIMEOUT    50000                                          /**< Time for which the device must continue to send notifications once connected to central (in milli seconds). */
 #define APP_CFG_ADV_DATA_LEN          31                                            /**< Required length of the complete advertisement packet. This should be atleast 8 in order to accommodate flag field and other mandatory fields and one byte of manufacturer specific data. */
 #define APP_CFG_CONNECTION_INTERVAL   10                                            /**24 < Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
 #define APP_CFG_CHAR_LEN              20                                            /**< Size of the characteristic value being notified (in bytes). */
@@ -315,7 +315,7 @@ static void char_notify(void)
     {
 				ble_gatts_hvx_params_t 		hvx_params;
         memset(&hvx_params, 0, sizeof(hvx_params));
-        hvx_params.handle   = m_hrs.hrm_handles.value_handle;  //   m_char_handles.value_handle;
+        hvx_params.handle   = m_bas.Vtm_date_time_handles.value_handle;  //   m_char_handles.value_handle;
 //        hvx_params.handle   = m_bas.battery_level_handles.value_handle;  //   m_char_handles.value_handle;
         hvx_params.type     = BLE_GATT_HVX_NOTIFICATION;
         hvx_params.offset   = 0;
@@ -551,31 +551,13 @@ static void reset_prepare(void)
 static void service_add(void)
 {
     uint32_t       err_code;
-    ble_hrs_init_t hrs_init;
     ble_bas_init_t bas_init;
-//    ble_dis_init_t dis_init;
-    uint8_t        body_sensor_location;
-
-    // Initialize Heart Rate Service.
-    body_sensor_location = BLE_HRS_BODY_SENSOR_LOCATION_FINGER;
-
-    memset(&hrs_init, 0, sizeof(hrs_init));
-
-    hrs_init.evt_handler                 = NULL;
-    hrs_init.is_sensor_contact_supported = true;
-    hrs_init.p_body_sensor_location      = NULL; //&body_sensor_location;
-
-    // Here the sec level for the Heart Rate Service can be changed/increased.
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&hrs_init.hrs_hrm_attr_md.cccd_write_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&hrs_init.hrs_hrm_attr_md.read_perm);
-//    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&hrs_init.hrs_hrm_attr_md.read_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&hrs_init.hrs_hrm_attr_md.write_perm);
-
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&hrs_init.hrs_bsl_attr_md.read_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&hrs_init.hrs_bsl_attr_md.write_perm);
-
-    err_code = ble_hrs_init(&m_hrs, &hrs_init);
-    APP_ERROR_CHECK(err_code);
+    ble_gatts_char_md_t char_md;
+    ble_gatts_attr_md_t cccd_md;
+    ble_gatts_attr_t    attr_char_value;
+    ble_uuid_t          ble_uuid;
+    ble_gatts_attr_md_t attr_md;
+    uint8_t             init_len;
 
     // Initialize Battery Service.
     memset(&bas_init, 0, sizeof(bas_init));
@@ -587,24 +569,108 @@ static void service_add(void)
 
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_report_read_perm);
 
-    bas_init.evt_handler          = NULL;
-    bas_init.support_notification = true;
-    bas_init.p_report_ref         = NULL;
-    bas_init.initial_batt_level   = 100;
 
-    err_code = ble_bas_init(&m_bas, &bas_init);
+    // Add service
+    BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_ALERT_NOTIFICATION_SERVICE);
+
+    err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY, &ble_uuid, &m_service_handle);
     APP_ERROR_CHECK(err_code);
 
-//    // Initialize Device Information Service.
-//    memset(&dis_init, 0, sizeof(dis_init));
 
-//    ble_srv_ascii_to_utf8(&dis_init.manufact_name_str, (char *)MANUFACTURER_NAME);
+    // Add Battery Level characteristic
+        memset(&cccd_md, 0, sizeof(cccd_md));
 
-//    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&dis_init.dis_attr_md.read_perm);
-//    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&dis_init.dis_attr_md.write_perm);
+        // According to BAS_SPEC_V10, the read operation on cccd should be possible without
+        // authentication.
+        BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.read_perm);
+        cccd_md.write_perm = bas_init.battery_level_char_attr_md.cccd_write_perm;
+        cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
 
-//    err_code = ble_dis_init(&dis_init);
-//    APP_ERROR_CHECK(err_code);
+				memset(&char_md, 0, sizeof(char_md));
+		//		char_md.char_props.broadcast = 1;
+				char_md.char_props.read   = 1;
+		//    char_md.char_props.write   = 1;
+				char_md.char_props.notify = 1;
+				char_md.p_char_user_desc  = NULL;
+				char_md.p_char_pf         = NULL;
+				char_md.p_user_desc_md    = NULL;
+				char_md.p_cccd_md         = (char_md.char_props.notify) ? &cccd_md : NULL;
+				char_md.p_sccd_md         = NULL;
+		//		char_md.p_sccd_md = &cccd_md;
+		//    char_md.p_sccd_md->vloc       = BLE_GATTS_VLOC_STACK;
+
+
+				memset(&attr_md, 0, sizeof(attr_md));
+
+				attr_md.read_perm  = bas_init.battery_level_char_attr_md.read_perm;
+				attr_md.write_perm = bas_init.battery_level_char_attr_md.write_perm;
+				attr_md.vloc       = BLE_GATTS_VLOC_STACK;
+				attr_md.rd_auth    = 0;
+				attr_md.wr_auth    = 0;
+				attr_md.vlen       = 0;
+
+				memset(&attr_char_value, 0, sizeof(attr_char_value));
+				attr_char_value.p_attr_md = &attr_md;
+				attr_char_value.init_len  = sizeof(uint32_t);
+				attr_char_value.init_offs = 0;
+				attr_char_value.max_len   = sizeof(uint32_t);
+				attr_char_value.p_value   = NULL; //&initial_battery_level;
+
+				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_DATE_TIME_CHAR);
+				attr_char_value.p_uuid    = &ble_uuid;
+				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
+																									 &attr_char_value,
+																									 &m_bas.Vtm_date_time_handles);
+
+
+
+		//        uint16_t len=2;
+		//        uint8_t  s=1;
+		//        err_code = sd_ble_gatts_value_set(p_bas->battery_level_handles.sccd_handle,
+		//                                          0,
+		//                                          &len,
+		//                                          &s);
+				char_md.char_props.broadcast = 0;
+				char_md.char_props.write   = 0;
+				char_md.char_props.notify = 0;
+				char_md.p_cccd_md         = (char_md.char_props.notify) ? &cccd_md : NULL;
+
+				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_BATTERY_LEVEL_CHAR);
+				attr_char_value.p_uuid    = &ble_uuid;
+				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
+																									 &attr_char_value,
+																									 &m_bas.battery_level_handles);
+
+				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_TEMPERATURE_MEASUREMENT_CHAR);
+				attr_char_value.p_uuid    = &ble_uuid;
+				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
+																									 &attr_char_value,
+																									 &m_bas.Vtm_temp_level_handles);
+
+				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_HID_INFORMATION_CHAR);
+				attr_char_value.p_uuid    = &ble_uuid;
+				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
+																									 &attr_char_value,
+																									 &m_bas.Vtm_humi_level_handles);
+
+				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_TEMPERATURE_TYPE_CHAR);
+				attr_char_value.p_uuid    = &ble_uuid;
+				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
+																									 &attr_char_value,
+																									 &m_bas.Nrf_temp_level_handles);
+
+
+				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_REPORT_CHAR);
+				attr_char_value.p_uuid    = &ble_uuid;
+				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
+																									 &attr_char_value,
+																									 &m_bas.Nrf_name_handles);
+
+				APP_ERROR_CHECK(err_code);
+
+
+
+
     
 #ifdef BLE_DFU_APP_SUPPORT    
     /** @snippet [DFU BLE Service initialization] */
@@ -884,7 +950,7 @@ static void on_write(ble_evt_t * p_ble_evt)
 {
 		uint32_t err_code;
     ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
-    if ((p_evt_write->handle == m_hrs.hrm_handles.cccd_handle) && (p_evt_write->len == 2))
+    if ((p_evt_write->handle == m_bas.Vtm_date_time_handles.cccd_handle) && (p_evt_write->len == 2))
 //    if ((p_evt_write->handle == m_bas.battery_level_handles.cccd_handle) && (p_evt_write->len == 2))
     {
         // CCCD written. Start notifications
