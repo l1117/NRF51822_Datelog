@@ -1,30 +1,3 @@
-/* Copyright (c) 2014 Nordic Semiconductor. All Rights Reserved.
- *
- * The information contained herein is property of Nordic Semiconductor ASA.
- * Terms and conditions of usage are described in detail in NORDIC
- * SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT.
- *
- * Licensees are granted free, non-transferable use of the information. NO
- * WARRANTY of ANY KIND is provided. This heading must NOT be removed from
- * the file.
- *
- */
-
-/** @file
- *
- * @defgroup ble_sdk_app_pwr_mgmt_main main.c
- * @{
- * @ingroup ble_sdk_app_pwr_mgmt
- * @brief Power profiling sample application main file.
- *
- * This file contains the source code for a sample application to demonstrate/measure the power
- * consumption by the nRF51822 chip while sending notifications for a given duration and while
- * advertising in non-connectable mode for a given duration. The values of macros that begin 
- * with APP_CFG_ prefix can be changed to alter the power consumption of the application.
- *
- * @ref srvlib_conn_params module.
- */
-
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"
@@ -349,6 +322,14 @@ static void char_notify(void)
 					}
 		}
 }
+ char char_hex( char bHex){
+		bHex&=0x0f;
+    if((bHex<10))
+        bHex += '0';
+    else bHex += 'A'-10;
+//    else bHex = 0xff;
+    return bHex;
+}
 
 /**@brief Function for the GAP initialization.
  *
@@ -359,14 +340,22 @@ static void char_notify(void)
 static void gap_params_init(char *sadvname)
 {
     uint32_t                err_code;
+		uint8_t 								i;
     ble_gap_conn_params_t   gap_conn_params;
     ble_gap_conn_sec_mode_t sec_mode;
-		char adv_name[23] ;
+		char adv_name[23] = "CSTNET_" ;
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&sec_mode);
 		ble_gap_addr_t  	p_addr;
     sd_ble_gap_address_get	(	&p_addr	);
-		sprintf(adv_name, "CSTNET_%4s:%x%x%x%x%x%x",sadvname,p_addr.addr[5],p_addr.addr[4],p_addr.addr[3],p_addr.addr[2],p_addr.addr[1],p_addr.addr[0]);
-    err_code = sd_ble_gap_device_name_set(&sec_mode,
+//		sprintf(adv_name, "CSTNET_%4s:%x%x%x%x%x%x",sadvname,p_addr.addr[5],p_addr.addr[4],p_addr.addr[3],p_addr.addr[2],p_addr.addr[1],p_addr.addr[0]);
+    for (i=7;sadvname[i-7];i++) adv_name[i]=sadvname[i-7];
+		adv_name[i++] = char_hex(p_addr.addr[5]>>4);		adv_name[i++] = char_hex(p_addr.addr[5]);
+		adv_name[i++] = char_hex(p_addr.addr[4]>>4);		adv_name[i++] = char_hex(p_addr.addr[4]);
+		adv_name[i++] = char_hex(p_addr.addr[3]>>4);		adv_name[i++] = char_hex(p_addr.addr[3]);
+		adv_name[i++] = char_hex(p_addr.addr[2]>>4);		adv_name[i++] = char_hex(p_addr.addr[2]);
+		adv_name[i++] = char_hex(p_addr.addr[1]>>4);		adv_name[i++] = char_hex(p_addr.addr[1]);
+		adv_name[i++] = char_hex(p_addr.addr[0]>>4);		adv_name[i++] = char_hex(p_addr.addr[0]);
+		err_code = sd_ble_gap_device_name_set(&sec_mode,
                                           (const uint8_t *)adv_name ,
                                           24);
 
@@ -426,90 +415,6 @@ static void advertising_data_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
-/**@brief Function for adding the Characteristic.
- *
- * @details This function adds the characteristic to the local db.
- *
- * @param[in] uuid_type Type of service UUID assigned by the S110 SoftDevice.
- *
- */
-static void char_add(const uint8_t uuid_type)
-{
-    uint32_t            err_code;
-    ble_gatts_char_md_t char_md;
-    ble_gatts_attr_md_t cccd_md;
-    ble_gatts_attr_t    attr_char_value;
-    ble_uuid_t          char_uuid;
-    ble_gatts_attr_md_t attr_md;
-
-    memset(&cccd_md, 0, sizeof(cccd_md));
-
-    cccd_md.vloc = BLE_GATTS_VLOC_STACK;
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.read_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.write_perm);
-
-    memset(&char_md, 0, sizeof(char_md));
-
-    char_md.char_props.read   = 1;
-    char_md.char_props.notify = 1;
-    char_md.p_char_user_desc  = NULL;
-    char_md.p_char_pf         = NULL;
-    char_md.p_user_desc_md    = NULL;
-    char_md.p_cccd_md         = &cccd_md;
-    char_md.p_sccd_md         = NULL;
-
-    char_uuid.type = uuid_type;
-    char_uuid.uuid = LOCAL_CHAR_UUID;
-
-    memset(&attr_md, 0, sizeof(attr_md));
-
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.read_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&attr_md.write_perm);
-
-    attr_md.vloc    = BLE_GATTS_VLOC_STACK;
-    attr_md.rd_auth = 0;
-    attr_md.wr_auth = 0;
-    attr_md.vlen    = 0;
-
-    memset(&attr_char_value, 0, sizeof(attr_char_value));
-
-    attr_char_value.p_uuid    = &char_uuid;
-    attr_char_value.p_attr_md = &attr_md;
-    attr_char_value.init_len  = APP_CFG_CHAR_LEN;
-    attr_char_value.init_offs = 0;
-    attr_char_value.max_len   = APP_CFG_CHAR_LEN;
-    attr_char_value.p_value   = m_char_value;
-
-    err_code = sd_ble_gatts_characteristic_add(m_service_handle,
-                                               &char_md,
-                                               &attr_char_value,
-                                               &m_char_handles);
-    APP_ERROR_CHECK(err_code);
-}
-
-
-/**@brief Function for adding the Service.
- *
- * @details This function adds the service and the characteristic within it to the local db.
- *
- */
-//static void service_add(void)
-//{
-//    ble_uuid_t  service_uuid;
-//    uint32_t    err_code;
-// 
-//    service_uuid.uuid = LOCAL_SERVICE_UUID;
-
-//    err_code = sd_ble_uuid_vs_add(&m_base_uuid128, &service_uuid.type);
-//    APP_ERROR_CHECK(err_code);
-//    
-//    err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY, &service_uuid, &m_service_handle);
-//    APP_ERROR_CHECK(err_code);
-
-//    // Add characteristics
-//    char_add(service_uuid.type);
-//}
 #ifdef BLE_DFU_APP_SUPPORT    
 static void advertising_stop(void)
 {
@@ -550,8 +455,8 @@ static void reset_prepare(void)
 
 static void service_add(void)
 {
-    uint32_t       err_code;
-    ble_bas_init_t bas_init;
+    uint32_t       			err_code;
+    ble_bas_init_t 			bas_init;
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_md_t cccd_md;
     ble_gatts_attr_t    attr_char_value;
@@ -572,69 +477,54 @@ static void service_add(void)
 
     // Add service
     BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_ALERT_NOTIFICATION_SERVICE);
-
     err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY, &ble_uuid, &m_service_handle);
     APP_ERROR_CHECK(err_code);
 
 
-    // Add Battery Level characteristic
+    // cccd_md init characteristic
         memset(&cccd_md, 0, sizeof(cccd_md));
-
-        // According to BAS_SPEC_V10, the read operation on cccd should be possible without
-        // authentication.
         BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.read_perm);
-        cccd_md.write_perm = bas_init.battery_level_char_attr_md.cccd_write_perm;
+        BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.write_perm);
+//        cccd_md.write_perm = bas_init.battery_level_char_attr_md.cccd_write_perm;
         cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
 
 				memset(&char_md, 0, sizeof(char_md));
-		//		char_md.char_props.broadcast = 1;
+//				char_md.char_props.broadcast = 1;
 				char_md.char_props.read   = 1;
-		//    char_md.char_props.write   = 1;
+//		    char_md.char_props.write   = 1;
 				char_md.char_props.notify = 1;
 				char_md.p_char_user_desc  = NULL;
 				char_md.p_char_pf         = NULL;
 				char_md.p_user_desc_md    = NULL;
 				char_md.p_cccd_md         = (char_md.char_props.notify) ? &cccd_md : NULL;
 				char_md.p_sccd_md         = NULL;
-		//		char_md.p_sccd_md = &cccd_md;
-		//    char_md.p_sccd_md->vloc       = BLE_GATTS_VLOC_STACK;
-
 
 				memset(&attr_md, 0, sizeof(attr_md));
-
 				attr_md.read_perm  = bas_init.battery_level_char_attr_md.read_perm;
-				attr_md.write_perm = bas_init.battery_level_char_attr_md.write_perm;
+//				attr_md.write_perm = bas_init.battery_level_char_attr_md.write_perm;
 				attr_md.vloc       = BLE_GATTS_VLOC_STACK;
 				attr_md.rd_auth    = 0;
 				attr_md.wr_auth    = 0;
-				attr_md.vlen       = 0;
+				attr_md.vlen       = 1;  //0;
 
 				memset(&attr_char_value, 0, sizeof(attr_char_value));
 				attr_char_value.p_attr_md = &attr_md;
 				attr_char_value.init_len  = sizeof(uint32_t);
 				attr_char_value.init_offs = 0;
-				attr_char_value.max_len   = sizeof(uint32_t);
-				attr_char_value.p_value   = NULL; //&initial_battery_level;
-
+				attr_char_value.max_len   = 20; //sizeof(uint32_t);
+				attr_char_value.p_value   = NULL; 
+// char data_time
 				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_DATE_TIME_CHAR);
 				attr_char_value.p_uuid    = &ble_uuid;
 				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
 																									 &attr_char_value,
 																									 &m_bas.Vtm_date_time_handles);
-
-
-
-		//        uint16_t len=2;
-		//        uint8_t  s=1;
-		//        err_code = sd_ble_gatts_value_set(p_bas->battery_level_handles.sccd_handle,
-		//                                          0,
-		//                                          &len,
-		//                                          &s);
 				char_md.char_props.broadcast = 0;
 				char_md.char_props.write   = 0;
 				char_md.char_props.notify = 0;
 				char_md.p_cccd_md         = (char_md.char_props.notify) ? &cccd_md : NULL;
-
+				attr_char_value.max_len   = sizeof(uint32_t);
+// char battery_level
 				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_BATTERY_LEVEL_CHAR);
 				attr_char_value.p_uuid    = &ble_uuid;
 				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
@@ -666,12 +556,6 @@ static void service_add(void)
 																									 &attr_char_value,
 																									 &m_bas.Nrf_name_handles);
 
-				APP_ERROR_CHECK(err_code);
-
-
-
-
-    
 #ifdef BLE_DFU_APP_SUPPORT    
     /** @snippet [DFU BLE Service initialization] */
     ble_dfu_init_t   dfus_init;
@@ -747,8 +631,6 @@ static void s5tm_timeout_handler(void * p_context)
 		uint8_t data_id = 0, data_pos = false;
     uint32_t err_code=0;
 		uint8_t timer_flash_id = ((uint8_t)( timer_counter/TIME_PERIOD));
-//		uint16_t Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
-//		int32_t nrf_temp=0;
 		uint16_t len = 4;
 //		timer_counter+=TIME_PERIOD;
 				battery_start(4);	 //For 3.3V boster
@@ -794,19 +676,6 @@ static void s5tm_timeout_handler(void * p_context)
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
 				nrf_gpio_pin_clear (13);
 				sd_temp_get(&nrf_temp);  													//Get Cpu tempreature
-//				int32_t ss ;
-//				ss = HTONL(batt_lvl_in_milli_volts);
-//        sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-//				ss = HTONL(Vtm_temp);
-//	      sd_ble_gatts_value_set(m_bas.Vtm_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-//				ss = HTONL(Vtm_humi);
-//	      sd_ble_gatts_value_set(m_bas.Vtm_humi_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-//				ss = HTONL(nrf_temp);
-//	      sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-//				ss = HTONL(timer_counter);
-//	      sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&ss);
-//				ss = (*(uint32_t *)advname);
-//	      err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)&ss);
 
 						pstorage_handle_t flash_handle;
 						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%100), &flash_handle);
@@ -822,10 +691,8 @@ static void s5tm_timeout_handler(void * p_context)
 			 *( (uint16_t *) (m_addl_adv_manuf_data+8))  = Vtm_humi;
 			 *( (uint16_t *) (m_addl_adv_manuf_data+10)) = batt_lvl_in_milli_volts ;
 			 *( (uint32_t *) (m_addl_adv_manuf_data+12)) = nrf_temp ;
-
-
-    err_code = ble_advdata_set(&advdata, NULL);
-    APP_ERROR_CHECK(err_code);
+				err_code = ble_advdata_set(&advdata, NULL);
+				APP_ERROR_CHECK(err_code);
 }
 
 static void timecounter_handler(void * p_context)
@@ -835,7 +702,7 @@ static void timecounter_handler(void * p_context)
 		if (++timer_counter%TIME_PERIOD){  
 				*( (uint32_t *) m_addl_adv_manuf_data) = timer_counter ;
 				err_code = ble_advdata_set(&advdata, NULL);
-				APP_ERROR_CHECK(err_code);
+//				APP_ERROR_CHECK(err_code);
 			}
 		else s5tm_timeout_handler(NULL);
 }
@@ -1195,7 +1062,7 @@ int main(void)
 		param.block_size  = 1024;                   //Select block size of 16 bytes
 		param.block_count = 100;                  	//Select 10 blocks, total of 160 bytes
 		param.cb          = example_cb_handler;   	//Set the pstorage callback handler
-		pstorage_register(&param, &flash_base_handle);
+		err_code = pstorage_register(&param, &flash_base_handle);
 
     gap_params_init(advname);
 //    sd_ble_gap_tx_power_set(4);
