@@ -175,6 +175,7 @@ static void application_timers_stop(void);
 static void application_timers_start(void);
 
 #define TIME_PERIOD	 			5       /*5TM time period in seconds*/
+#define PSTORAGE_PAGE_SIZE		1024
 
 ////////////////////////////////////////////////
 /**@brief Callback function for asserts in the SoftDevice.
@@ -645,11 +646,12 @@ static void s5tm_timeout_handler(void * p_context)
 //				data_saved = (Vtm_humi << 16) + Vtm_temp ;
 				data_saved = (timer_counter<<16)+ batt_lvl_in_milli_volts ; //test flash write
 
-						pstorage_handle_t flash_handle;
-						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%PSTORAGE_MAX_APPLICATIONS), &flash_handle);
+						pstorage_handle_t 		flash_handle;
+//						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%PSTORAGE_MAX_APPLICATIONS), &flash_handle);
+						pstorage_block_identifier_get(&flash_base_handle,((timer_counter/(TIME_PERIOD*(PSTORAGE_PAGE_SIZE/4)))%PSTORAGE_MAX_APPLICATIONS), &flash_handle);
 						if (flash_handle.block_id != flash_handle_last.block_id || flash_handle.module_id != flash_handle_last.module_id) {
 								flash_handle_last = flash_handle;
-								err_code = pstorage_clear(&flash_handle,1024);
+								err_code = pstorage_clear(&flash_handle,PSTORAGE_PAGE_SIZE);
 							}
 						err_code = pstorage_store(&flash_handle, (uint8_t * )&data_saved, 4, timer_flash_id*4);
 
@@ -796,8 +798,12 @@ static void on_write(ble_evt_t * p_ble_evt)
 //						timer_shifting = (timer_counter/TIME_PERIOD)& 0xfffffffC;  // intergreat /4
 						timer_shifting = 0;
 						pstorage_handle_t flash_handle;
-						pstorage_block_identifier_get(&flash_base_handle,flash_block_num++, &flash_handle);
+						if (flash_block_num > PSTORAGE_MAX_APPLICATIONS) flash_block_num = PSTORAGE_MAX_APPLICATIONS-1;
+						pstorage_block_identifier_get(&flash_base_handle,flash_block_num, &flash_handle);
 						pstorage_load((uint8_t *)flash_page_data, &flash_handle,1024,0);
+						flash_page_data[259] = flash_block_num-- ;
+						flash_page_data[258] = PSTORAGE_MAX_APPLICATIONS;
+						flash_page_data[257] = PSTORAGE_PAGE_SIZE;
             char_notify();
 						application_timers_start();
         }
@@ -832,7 +838,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 //						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(1330, UNIT_10_MS) ;	//Interval Max * (Slave Latency + 1) * 3 < connSupervisionTimeout
 						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
             APP_ERROR_CHECK(err_code);
-						flash_block_num = ((timer_shifting)>>8)%PSTORAGE_MAX_APPLICATIONS;
+//						flash_block_num = ((timer_shifting)>>8)%PSTORAGE_MAX_APPLICATIONS;
+						flash_block_num = (timer_counter/(TIME_PERIOD*(PSTORAGE_PAGE_SIZE/4)))%PSTORAGE_MAX_APPLICATIONS;
 // Updata server data for display  
 						ss = HTONL(batt_lvl_in_milli_volts);
 						sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
@@ -1026,7 +1033,7 @@ int main(void)
     scheduler_init();    
 
 		pstorage_init();
-		param.block_size  = 1024;                   //Select block size of 16 bytes
+		param.block_size  = PSTORAGE_PAGE_SIZE;                   //Select block size of 16 bytes
 		param.block_count = PSTORAGE_MAX_APPLICATIONS;                  	//Select 10 blocks, total of 160 bytes
 		param.cb          = example_cb_handler;   	//Set the pstorage callback handler
 		err_code = pstorage_register(&param, &flash_base_handle);

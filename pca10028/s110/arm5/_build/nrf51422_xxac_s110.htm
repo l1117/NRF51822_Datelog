@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\_build\nrf51422_xxac_s110.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\_build\nrf51422_xxac_s110.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Fri Apr 10 09:43:40 2015
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Fri Apr 10 15:15:01 2015
 <BR><P>
-<H3>Maximum Stack Usage =        296 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        288 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 timecounter_handler &rArr; s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 <P>
@@ -715,7 +715,7 @@ Local Symbols
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 </UL>
 
-<P><STRONG><a name="[5c]"></a>on_ble_evt</STRONG> (Thumb, 514 bytes, Stack size 32 bytes, main.o(i.on_ble_evt))
+<P><STRONG><a name="[5c]"></a>on_ble_evt</STRONG> (Thumb, 522 bytes, Stack size 32 bytes, main.o(i.on_ble_evt))
 <BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = on_ble_evt &rArr; on_write &rArr; char_notify &rArr; application_timers_start &rArr; app_timer_start &rArr; timer_start_op_schedule &rArr; user_op_alloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
@@ -731,7 +731,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_evt_dispatch
 </UL>
 
-<P><STRONG><a name="[81]"></a>on_write</STRONG> (Thumb, 108 bytes, Stack size 24 bytes, main.o(i.on_write))
+<P><STRONG><a name="[81]"></a>on_write</STRONG> (Thumb, 148 bytes, Stack size 24 bytes, main.o(i.on_write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = on_write &rArr; char_notify &rArr; application_timers_start &rArr; app_timer_start &rArr; timer_start_op_schedule &rArr; user_op_alloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_load
@@ -751,8 +751,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[89]"></a>s5tm_timeout_handler</STRONG> (Thumb, 430 bytes, Stack size 48 bytes, main.o(i.s5tm_timeout_handler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 280<LI>Call Chain = s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
+<P><STRONG><a name="[89]"></a>s5tm_timeout_handler</STRONG> (Thumb, 424 bytes, Stack size 40 bytes, main.o(i.s5tm_timeout_handler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 272<LI>Call Chain = s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;simple_uart_get_with_timeout
 <LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;simple_uart_config
@@ -796,7 +796,7 @@ Local Symbols
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.ble_stack_init)
 </UL>
 <P><STRONG><a name="[28]"></a>timecounter_handler</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, main.o(i.timecounter_handler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 296<LI>Call Chain = timecounter_handler &rArr; s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
+<BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = timecounter_handler &rArr; s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_advdata_set
 <LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
