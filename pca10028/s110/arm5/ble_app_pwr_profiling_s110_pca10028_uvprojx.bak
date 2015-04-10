@@ -483,11 +483,6 @@
               <FilePath>RTE\nRF_BLE\nRF51822_xxAA\ble_conn_params.h</FilePath>
             </File>
             <File>
-              <FileName>ble_hrs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_hrs\ble_hrs.c</FilePath>
-            </File>
-            <File>
               <FileName>ble_dfu.c</FileName>
               <FileType>1</FileType>
               <FilePath>C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_dfu\ble_dfu.c</FilePath>
@@ -669,12 +664,6 @@
         </targetInfos>
       </component>
       <component Cclass="nRF_BLE" Cgroup="BLE_Services" Csub="ble_dfu" Cvendor="NordicSemiconductor" Cversion="1.1.0" condition="ble_dfu">
-        <package name="nRF_BLE" schemaVersion="1.2" supportContact="http://www.nordicsemi.com/About-us/Contact-us" url="http://developer.nordicsemi.com/nRF51_SDK/pieces/nRF_BLE/" vendor="NordicSemiconductor" version="1.1.0"/>
-        <targetInfos>
-          <targetInfo name="nrf51822_5TM_s110"/>
-        </targetInfos>
-      </component>
-      <component Cclass="nRF_BLE" Cgroup="BLE_Services" Csub="ble_hrs" Cvendor="NordicSemiconductor" Cversion="1.1.0" condition="ble_hrs">
         <package name="nRF_BLE" schemaVersion="1.2" supportContact="http://www.nordicsemi.com/About-us/Contact-us" url="http://developer.nordicsemi.com/nRF51_SDK/pieces/nRF_BLE/" vendor="NordicSemiconductor" version="1.1.0"/>
         <targetInfos>
           <targetInfo name="nrf51822_5TM_s110"/>

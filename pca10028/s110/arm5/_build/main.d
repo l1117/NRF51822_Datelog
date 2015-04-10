@@ -44,14 +44,6 @@
 .\_build\main.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_timer.h
 .\_build\main.o: C:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
 .\_build\main.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Libraries\nRF51822_xxAA\app_gpiote.h
-.\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_dfu\ble_dfu.h
-.\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\bootloader_dfu\experimental\dfu_app_handler.h
-.\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\bootloader_dfu\bootloader_types.h
-.\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\device_manager\device_manager.h
-.\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\sdk_common.h
-.\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\sdk_os.h
-.\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\sdk_errors.h
-.\_build\main.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_BLE\nRF51822_xxAA\device_manager_cnfg.h
 .\_build\main.o: ..\..\..\spi_master.h
 .\_build\main.o: C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\RTE\nRF_Drivers\nRF51822_xxAA\simple_uart.h
 .\_build\main.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Drivers\1.2.0\hal\nrf_temp.h

@@ -29,7 +29,7 @@ static ble_bas_t                             m_bas;                             
 #include "nrf_delay.h"
 #include "pstorage.h"
 //static bool                                  m_memory_access_in_progress = false;       /**< Flag to keep track of ongoing operations on persistent memory. */
-static pstorage_handle_t      m_storage_handle;                                     /**< Persistent storage handle for blocks requested by the module. */
+//static pstorage_handle_t      m_storage_handle;                                     /**< Persistent storage handle for blocks requested by the module. */
 
 #define IS_SRVC_CHANGED_CHARACT_PRESENT     0                                       /**< Include or not the service_changed characteristic. if not enabled, the server's database cannot be changed for the lifetime of the device*/
 
@@ -42,6 +42,7 @@ static pstorage_handle_t      m_storage_handle;                                 
 #define APP_CFG_CONNECTION_INTERVAL   10                                            /**24 < Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
 #define APP_CFG_CHAR_LEN              20                                            /**< Size of the characteristic value being notified (in bytes). */
 
+//#define BLE_DFU_APP_SUPPORT
 #ifdef BLE_DFU_APP_SUPPORT
 #define DFU_REV_MAJOR                        0x00                                       /** DFU Major revision number to be exposed. */
 #define DFU_REV_MINOR                        0x01                                       /** DFU Minor revision number to be exposed. */
@@ -57,11 +58,11 @@ static pstorage_handle_t      m_storage_handle;                                 
 //      The following parameters are not meant to be changed while using this application for power
 //      profiling.
 
-#define NOTIF_BUTTON_ID               0                                             /**< Button used for initializing the application in connectable mode. */
-#define NON_CONN_ADV_BUTTON_ID        1                                             /**< Button used for initializing the application in non-connectable mode. */
+//#define NOTIF_BUTTON_ID               0                                             /**< Button used for initializing the application in connectable mode. */
+//#define NON_CONN_ADV_BUTTON_ID        1                                             /**< Button used for initializing the application in non-connectable mode. */
 
-#define DEVICE_NAME                   "CSTNet_5TM__7__"                           /**< Name of device. Will be included in the advertising data. */
-#define MANUFACTURER_NAME                    "CSTNET"                      /**< Manufacturer. Will be passed to Device Information Service. */
+//#define DEVICE_NAME                   "CSTNet_5TM__7__"                           /**< Name of device. Will be included in the advertising data. */
+//#define MANUFACTURER_NAME                    "CSTNET"                      /**< Manufacturer. Will be passed to Device Information Service. */
 
 #define APP_TIMER_PRESCALER           0                                             /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_MAX_TIMERS          5                  /**< Maximum number of simultaneously created timers. */
@@ -118,52 +119,38 @@ static pstorage_handle_t      m_storage_handle;                                 
 #define DEAD_BEEF                     0xDEADBEEF                                    /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
 /**@brief 128-bit UUID base List. */
-static const ble_uuid128_t m_base_uuid128 =
-{
-   {
-       0x23, 0xD1, 0xBC, 0xEA, 0x5F, 0x78, 0x23, 0x15,
-       0xDE, 0xEF, 0x12, 0x12, 0x00, 0x00, 0x00, 0x00
-   }
-};
+//static const ble_uuid128_t m_base_uuid128 =
+//{
+//   {
+//       0x23, 0xD1, 0xBC, 0xEA, 0x5F, 0x78, 0x23, 0x15,
+//       0xDE, 0xEF, 0x12, 0x12, 0x00, 0x00, 0x00, 0x00
+//   }
+//};
 
-static ble_gap_adv_params_t     m_adv_params;                                       /**< Parameters to be passed to the stack when starting advertising. */
-static uint8_t                  m_char_value[APP_CFG_CHAR_LEN];                     /**< Value of the characteristic that will be sent as a notification to the central. */
-static uint8_t                  m_addl_adv_manuf_data[ADV_ADDL_MANUF_DATA_LEN];     /**< Value of the additional manufacturer specific data that will be placed in air (initialized to all zeros). */
-static ble_gatts_char_handles_t m_char_handles;                                     /**< Handles of local characteristic (as provided by the BLE stack).*/
-static uint16_t                 m_conn_handle = BLE_CONN_HANDLE_INVALID;            /**< Handle of the current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection).*/
-static uint16_t                 m_service_handle;                                   /**< Handle of local service (as provided by the BLE stack).*/
-static bool                     m_is_notifying_enabled = false;                     /**< Variable to indicate whether the notification is enabled by the peer.*/
-static app_timer_id_t           m_conn_int_timer_id;                                /**< Connection interval timer. */
-static app_timer_id_t           m_notif_timer_id;                                   /**< Notification timer. */
-/////////////////////////added by yelun
-static app_timer_id_t           m_s5tm_timer_id;  
-static app_timer_id_t           m_timecounter_id;  
+static ble_gap_adv_params_t      m_adv_params;                                       /**< Parameters to be passed to the stack when starting advertising. */
+//static uint8_t                  m_char_value[APP_CFG_CHAR_LEN];                     /**< Value of the characteristic that will be sent as a notification to the central. */
+static uint8_t                   m_addl_adv_manuf_data[ADV_ADDL_MANUF_DATA_LEN];     /**< Value of the additional manufacturer specific data that will be placed in air (initialized to all zeros). */
+//static ble_gatts_char_handles_t m_char_handles;                                     /**< Handles of local characteristic (as provided by the BLE stack).*/
+static uint16_t                  m_conn_handle = BLE_CONN_HANDLE_INVALID;            /**< Handle of the current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection).*/
+static uint16_t                  m_service_handle;                                   /**< Handle of local service (as provided by the BLE stack).*/
+static bool                      m_is_notifying_enabled = false;                     /**< Variable to indicate whether the notification is enabled by the peer.*/
+static app_timer_id_t            m_conn_int_timer_id;                                /**< Connection interval timer. */
+static app_timer_id_t            m_notif_timer_id;                                   /**< Notification timer. */
+/////////////////////////added  by yelun
+//static app_timer_id_t           m_s5tm_timer_id;  
+static app_timer_id_t            m_timecounter_id;  
+static uint32_t 							   flash_page_data[256+4];
+static uint32_t 								 timer_counter = 0;
+static uint32_t 							   timer_shifting = 0;
+static pstorage_handle_t 				 flash_handle_last;
 
-//static uint8_t tx_data[522]; /**< SPI TX buffer. */
-//static uint8_t rx_data[522]; /**< SPI RX buffer. */
-static uint32_t flash_page_data[256+4];
-static uint32_t *spi_base_address;
-static uint16_t spi_flash_pages = 0;
-static uint16_t spi_flash_pages_count = 0;
-static uint32_t timer_counter = 0;
-static uint32_t timer_shifting = 0;
-static pstorage_handle_t flash_handle_last;
-
-static ble_advdata_t              advdata;
-static ble_advdata_manuf_data_t   manuf_data;
-static uint8_t                    flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
-static char 									 	  *advname = "5TM_";
-//// page in flash
-//    uint32_t pg_size ;
-//    uint32_t pg_num ;  
-//        // Start address:
-//    uint32_t *pg_addr ;
-//		bool flash_ready;
-//		uint16_t delay_i;
-#define TIME_PERIOD	 5        /*5TM time period in seconds*/
+static ble_advdata_t             advdata;
+static ble_advdata_manuf_data_t  manuf_data;
+static uint8_t                   flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
+static char 									 	 *advname = "5TM_";
 //#define START_ADDRESS 0x1B000	  /*Data recordes start address, 12KB program flash from 0x160005*/
-static uint16_t Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;  //sensor data;
-static int32_t nrf_temp=0;
+static uint16_t  Vtm_humi=0, Vtm_unknow=0, Vtm_temp=0;  //sensor data;
+static int32_t   nrf_temp=0;
 
 static bool                                  m_memory_access_in_progress = false;       /**< Flag to keep track of ongoing operations on persistent memory. */
 
@@ -186,6 +173,8 @@ void pstorage_sys_event_handler (uint32_t p_evt);
 
 static void application_timers_stop(void);
 static void application_timers_start(void);
+
+#define TIME_PERIOD	 			5       /*5TM time period in seconds*/
 
 ////////////////////////////////////////////////
 /**@brief Callback function for asserts in the SoftDevice.
@@ -294,7 +283,7 @@ static void char_notify(void)
         hvx_params.offset   = 0;
         hvx_params.p_len    = &len;
 //        hvx_params.p_data   = (uint8_t *) flash_load;  //m_char_value;
-				pstorage_handle_t flash_handle;
+//				pstorage_handle_t flash_handle;
 
 				while(true){
 					hvx_params.p_data   = ((uint8_t *) &flash_page_data[(uint8_t)timer_shifting]);  //m_char_value;
@@ -341,7 +330,7 @@ static void gap_params_init(char *sadvname)
 {
     uint32_t                err_code;
 		uint8_t 								i;
-    ble_gap_conn_params_t   gap_conn_params;
+//    ble_gap_conn_params_t   gap_conn_params;
     ble_gap_conn_sec_mode_t sec_mode;
 		char adv_name[23] = "CSTNET_" ;
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&sec_mode);
@@ -358,10 +347,6 @@ static void gap_params_init(char *sadvname)
 		err_code = sd_ble_gap_device_name_set(&sec_mode,
                                           (const uint8_t *)adv_name ,
                                           24);
-
-//    err_code = sd_ble_gap_device_name_set(&sec_mode,
-//                                          (const uint8_t *)DEVICE_NAME, 
-//                                          strlen(DEVICE_NAME));
     APP_ERROR_CHECK(err_code);
 }
 
@@ -390,30 +375,6 @@ static void connectable_adv_init(void)
  *          both connectable and non-connectable modes.
  *
  */
-static void advertising_data_init(void)
-{
-    uint32_t                   err_code;
-    ble_advdata_t              advdata;
-    ble_advdata_manuf_data_t   manuf_data;
-    uint8_t                    flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
-//		int8_t											tx_power_level = 4;
-    APP_ERROR_CHECK_BOOL(sizeof(flags) == ADV_FLAGS_LEN);  // Assert that these two values of the same.
-
-    // Build and set advertising data
-    memset(&advdata, 0, sizeof(advdata));
-
-    manuf_data.company_identifier = COMPANY_IDENTIFIER;
-    manuf_data.data.size          = ADV_ADDL_MANUF_DATA_LEN;
-    manuf_data.data.p_data        = m_addl_adv_manuf_data;
-		advdata.name_type							= BLE_ADVDATA_SHORT_NAME;
-		advdata.short_name_len				= 8;
-    advdata.flags.size            = sizeof(flags);
-    advdata.flags.p_data          = &flags;
-    advdata.p_manuf_specific_data = &manuf_data;
-//		advdata.p_tx_power_level			=	&tx_power_level;
-    err_code = ble_advdata_set(&advdata, NULL);
-    APP_ERROR_CHECK(err_code);
-}
 
 #ifdef BLE_DFU_APP_SUPPORT    
 static void advertising_stop(void)
@@ -456,23 +417,23 @@ static void reset_prepare(void)
 static void service_add(void)
 {
     uint32_t       			err_code;
-    ble_bas_init_t 			bas_init;
+//    ble_bas_init_t 			bas_init;
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_md_t cccd_md;
     ble_gatts_attr_t    attr_char_value;
     ble_uuid_t          ble_uuid;
     ble_gatts_attr_md_t attr_md;
-    uint8_t             init_len;
+//    uint8_t             init_len;
 
     // Initialize Battery Service.
-    memset(&bas_init, 0, sizeof(bas_init));
+//    memset(&bas_init, 0, sizeof(bas_init));
 
     // Here the sec level for the Battery Service can be changed/increased.
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_char_attr_md.cccd_write_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_char_attr_md.read_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&bas_init.battery_level_char_attr_md.write_perm);
+//    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_char_attr_md.cccd_write_perm);
+//    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_char_attr_md.read_perm);
+//    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&bas_init.battery_level_char_attr_md.write_perm);
 
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_report_read_perm);
+//    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&bas_init.battery_level_report_read_perm);
 
 
     // Add service
@@ -489,25 +450,27 @@ static void service_add(void)
         cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
 
 				memset(&char_md, 0, sizeof(char_md));
-//				char_md.char_props.broadcast = 1;
-				char_md.char_props.read   = 1;
+				char_md.char_props.broadcast = 1;
+//				char_md.char_props.read   = 1;
 //		    char_md.char_props.write   = 1;
 				char_md.char_props.notify = 1;
 				char_md.p_char_user_desc  = NULL;
 				char_md.p_char_pf         = NULL;
 				char_md.p_user_desc_md    = NULL;
 				char_md.p_cccd_md         = (char_md.char_props.notify) ? &cccd_md : NULL;
-				char_md.p_sccd_md         = NULL;
+				char_md.p_sccd_md         = (char_md.char_props.broadcast) ? &cccd_md : NULL;
 
 				memset(&attr_md, 0, sizeof(attr_md));
-				attr_md.read_perm  = bas_init.battery_level_char_attr_md.read_perm;
-//				attr_md.write_perm = bas_init.battery_level_char_attr_md.write_perm;
+				BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.read_perm);
+//				attr_md.read_perm  = bas_init.battery_level_char_attr_md.read_perm;
+////				attr_md.write_perm = bas_init.battery_level_char_attr_md.write_perm;
 				attr_md.vloc       = BLE_GATTS_VLOC_STACK;
 				attr_md.rd_auth    = 0;
 				attr_md.wr_auth    = 0;
 				attr_md.vlen       = 1;  //0;
 
 				memset(&attr_char_value, 0, sizeof(attr_char_value));
+
 				attr_char_value.p_attr_md = &attr_md;
 				attr_char_value.init_len  = sizeof(uint32_t);
 				attr_char_value.init_offs = 0;
@@ -520,9 +483,12 @@ static void service_add(void)
 																									 &attr_char_value,
 																									 &m_bas.Vtm_date_time_handles);
 				char_md.char_props.broadcast = 0;
+				char_md.char_props.read   = 1;
 				char_md.char_props.write   = 0;
 				char_md.char_props.notify = 0;
 				char_md.p_cccd_md         = (char_md.char_props.notify) ? &cccd_md : NULL;
+				char_md.p_sccd_md         = (char_md.char_props.broadcast) ? &cccd_md : NULL;
+
 				attr_char_value.max_len   = sizeof(uint32_t);
 // char battery_level
 				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_BATTERY_LEVEL_CHAR);
@@ -629,9 +595,10 @@ static void s5tm_timeout_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
 		uint8_t data_id = 0, data_pos = false;
-    uint32_t err_code=0;
+    static uint32_t data_saved ;  //must be STATIC for pstorage_store()
+		uint32_t err_code=0;
 		uint8_t timer_flash_id = ((uint8_t)( timer_counter/TIME_PERIOD));
-		uint16_t len = 4;
+//		uint16_t len = 4;
 //		timer_counter+=TIME_PERIOD;
 				battery_start(4);	 //For 3.3V boster
 //					battery_start(6);  //For 3.7V Li Battery 
@@ -641,7 +608,7 @@ static void s5tm_timeout_handler(void * p_context)
 				nrf_gpio_pin_set (13);												//Open power and UART for 5TM 
 				NRF_UART0->POWER = (UART_POWER_POWER_Enabled << UART_POWER_POWER_Pos);
 				simple_uart_config(NULL, 10, NULL, 12, false);
-				uint8_t cr,rx_count=10;
+				uint8_t cr; //rx_count=10;
 				Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
 				for (uint8_t i=0;i<50;i++){										//Get date from 5tm 
 //						m_addl_adv_manuf_data[rx_count++]=cr;  //simple_uart_put(cr);
@@ -671,11 +638,12 @@ static void s5tm_timeout_handler(void * p_context)
 						else if(data_pos) data_id++;
 					}
 		}	
-//				flash_page_data[timer_flash_id] = (Vtm_humi << 16) + Vtm_temp ;
-//				flash_page_data[timer_flash_id] = timer_counter ; //test flash write
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
 				nrf_gpio_pin_clear (13);
 				sd_temp_get(&nrf_temp);  													//Get Cpu tempreature
+
+//				data_saved = (Vtm_humi << 16) + Vtm_temp ;
+				data_saved = (timer_counter<<16)+ batt_lvl_in_milli_volts ; //test flash write
 
 						pstorage_handle_t flash_handle;
 						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%100), &flash_handle);
@@ -683,7 +651,7 @@ static void s5tm_timeout_handler(void * p_context)
 								flash_handle_last = flash_handle;
 								err_code = pstorage_clear(&flash_handle,1024);
 							}
-						err_code = pstorage_store(&flash_handle, (uint8_t * ) &timer_counter, 4, timer_flash_id*4);
+						err_code = pstorage_store(&flash_handle, (uint8_t * )&data_saved, 4, timer_flash_id*4);
 
 			 *( (uint32_t *)     m_addl_adv_manuf_data)  = timer_counter ;
 			 *( (uint16_t *) (m_addl_adv_manuf_data+4))  = Vtm_temp ;
@@ -698,10 +666,9 @@ static void s5tm_timeout_handler(void * p_context)
 static void timecounter_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
-		uint32_t err_code;
 		if (++timer_counter%TIME_PERIOD){  
 				*( (uint32_t *) m_addl_adv_manuf_data) = timer_counter ;
-				err_code = ble_advdata_set(&advdata, NULL);
+			uint32_t	err_code = ble_advdata_set(&advdata, NULL);
 //				APP_ERROR_CHECK(err_code);
 			}
 		else s5tm_timeout_handler(NULL);
@@ -815,7 +782,7 @@ static void timers_init(void)
  */
 static void on_write(ble_evt_t * p_ble_evt)
 {
-		uint32_t err_code;
+//		uint32_t err_code;
     ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
     if ((p_evt_write->handle == m_bas.Vtm_date_time_handles.cccd_handle) && (p_evt_write->len == 2))
 //    if ((p_evt_write->handle == m_bas.battery_level_handles.cccd_handle) && (p_evt_write->len == 2))
@@ -845,6 +812,8 @@ static void on_write(ble_evt_t * p_ble_evt)
 static void on_ble_evt(ble_evt_t * p_ble_evt)
 {
     uint32_t err_code = NRF_SUCCESS;
+		uint32_t ss;
+		uint16_t len = 4;
     
     switch (p_ble_evt->header.evt_id)
     {
@@ -865,8 +834,6 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
             APP_ERROR_CHECK(err_code);
 						flash_block_num = ((timer_shifting)>>8)%100;
 // Updata server data for display  
-						uint32_t ss;
-						uint16_t len = 4;
 						ss = HTONL(batt_lvl_in_milli_volts);
 						sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
 						ss = HTONL(Vtm_temp);
@@ -1014,13 +981,13 @@ static void ble_stack_init(void)
 
 
 
-static void dm_pstorage_cb_handler(pstorage_handle_t * p_handle,
-                                   uint8_t             op_code,
-                                   uint32_t            result,
-                                   uint8_t           * p_data,
-                                   uint32_t            data_len)
-{
-}
+//static void dm_pstorage_cb_handler(pstorage_handle_t * p_handle,
+//                                   uint8_t             op_code,
+//                                   uint32_t            result,
+//                                   uint8_t           * p_data,
+//                                   uint32_t            data_len)
+//{
+//}
 
 /**@brief Function for application main entry.
  */
@@ -1044,7 +1011,7 @@ int main(void)
 		pstorage_module_param_t		 param;
 //		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_MODE_ON);
 	 	nrf_delay_ms(20);  //There must be 20ms waitting for AT45DB161 ready from power on.
-		spi_base_address=spi_master_init(SPI0, SPI_MODE0, 0);
+		uint32_t *spi_base_address = spi_master_init(SPI0, SPI_MODE0, 0);
 		uint8_t tx_data[ ]={0XB9};
     spi_master_tx_rx(spi_base_address, 1, (const uint8_t *)tx_data, tx_data);
 
@@ -1063,7 +1030,6 @@ int main(void)
 		param.block_count = 100;                  	//Select 10 blocks, total of 160 bytes
 		param.cb          = example_cb_handler;   	//Set the pstorage callback handler
 		err_code = pstorage_register(&param, &flash_base_handle);
-
     gap_params_init(advname);
 //    sd_ble_gap_tx_power_set(4);
 		service_add();
