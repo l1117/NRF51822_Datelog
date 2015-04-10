@@ -646,7 +646,7 @@ static void s5tm_timeout_handler(void * p_context)
 				data_saved = (timer_counter<<16)+ batt_lvl_in_milli_volts ; //test flash write
 
 						pstorage_handle_t flash_handle;
-						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%100), &flash_handle);
+						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%PSTORAGE_MAX_APPLICATIONS), &flash_handle);
 						if (flash_handle.block_id != flash_handle_last.block_id || flash_handle.module_id != flash_handle_last.module_id) {
 								flash_handle_last = flash_handle;
 								err_code = pstorage_clear(&flash_handle,1024);
@@ -832,7 +832,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 //						gap_conn_params.conn_sup_timeout  = MSEC_TO_UNITS(1330, UNIT_10_MS) ;	//Interval Max * (Slave Latency + 1) * 3 < connSupervisionTimeout
 						err_code=sd_ble_gap_conn_param_update(m_conn_handle,&gap_conn_params);
             APP_ERROR_CHECK(err_code);
-						flash_block_num = ((timer_shifting)>>8)%100;
+						flash_block_num = ((timer_shifting)>>8)%PSTORAGE_MAX_APPLICATIONS;
 // Updata server data for display  
 						ss = HTONL(batt_lvl_in_milli_volts);
 						sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
@@ -1027,7 +1027,7 @@ int main(void)
 
 		pstorage_init();
 		param.block_size  = 1024;                   //Select block size of 16 bytes
-		param.block_count = 100;                  	//Select 10 blocks, total of 160 bytes
+		param.block_count = PSTORAGE_MAX_APPLICATIONS;                  	//Select 10 blocks, total of 160 bytes
 		param.cb          = example_cb_handler;   	//Set the pstorage callback handler
 		err_code = pstorage_register(&param, &flash_base_handle);
     gap_params_init(advname);
