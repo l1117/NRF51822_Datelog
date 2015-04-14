@@ -9,11 +9,11 @@ Project File Date:  04/09/2015
 <h2>Output:</h2>
 Build target 'nrf51822_5TM_s110'
 compiling main.c...
-..\..\..\main.c(161): warning:  #550-D: variable "pstorage_wait_flag" was set but never used
+..\..\..\main.c(163): warning:  #550-D: variable "pstorage_wait_flag" was set but never used
   static uint8_t pstorage_wait_flag = 0;
 ..\..\..\main.c: 1 warning, 0 errors
 linking...
-Program Size: Code=13392 RO-data=256 RW-data=180 ZI-data=6764  
+Program Size: Code=13476 RO-data=224 RW-data=196 ZI-data=6764  
 FromELF: creating hex file...
 ".\_build\nrf51422_xxac_s110.axf" - 0 Error(s), 1 Warning(s).
 
@@ -225,10 +225,32 @@ Hardware: V8.00
 S/N : 286370559 
 Feature(s) : RDI,FlashDL,FlashBP,JFlash 
  
-Error: Flash Download failed  -  Target DLL has been cancelled
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
+* JLink Info: Found SWD-DP with ID 0x0BB11477
+* JLink Info: Found Cortex-M0 r0p0, Little endian.
+* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
+ROMTableAddr = 0xE00FF003
+ 
+Target info:
+------------
+Device: nRF51822_xxAA
+VTarget = 4.212V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
+Hardware-Breakpoints: 4
+Software-Breakpoints: 8192
+Watchpoints:          2
+JTAG speed: 4000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+compiling main.c...
+..\..\..\main.c(163): warning:  #550-D: variable "pstorage_wait_flag" was set but never used
+  static uint8_t pstorage_wait_flag = 0;
+..\..\..\main.c: 1 warning, 0 errors
+"..\..\..\main.c" - 0 Error(s), 1 Warning(s).
+fo: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
  
 JLink info:
 ------------
@@ -246,7 +268,7 @@ ROMTableAddr = 0xE00FF003
 Target info:
 ------------
 Device: nRF51822_xxAA
-VTarget = 3.261V
+VTarget = 4.218V
 State of Pins: 
 TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
 Hardware-Breakpoints: 4
@@ -258,119 +280,3 @@ Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Error: Flash Download failed  -  Target DLL has been cancelled
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-Error: Flash Download failed  -  Target DLL has been cancelled
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x0BB11477
-* JLink Info: Found Cortex-M0 r0p0, Little endian.
-* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: nRF51822_xxAA
-VTarget = 3.274V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 4
-Software-Breakpoints: 8192
-Watchpoints:          2
-JTAG speed: 4000 kHz
- 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x0BB11477
-* JLink Info: Found Cortex-M0 r0p0, Little endian.
-* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: nRF51822_xxAA
-VTarget = 3.319V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 4
-Software-Breakpoints: 8192
-Watchpoints:          2
-JTAG speed: 4000 kHz
- 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Error: Flash Download failed  -  Target DLL has been cancelled
-Load "C:\\Users\\Yelun\\Documents\\GitHub\\NRF51822_Datelog\\pca10028\\s110\\arm5\\_build\\nrf51422_xxac_s110.axf" 
-Set JLink Project File to "C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\pca10028\s110\arm5\JLinkSettings.ini"
-* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.92 , compiled Sep 30 2014 09:33:42
-Firmware: J-Link ARM V8 compiled Sep 22 2014 23:26:43
-Hardware: V8.00
-S/N : 286370559 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x0BB11477
-* JLink Info: Found Cortex-M0 r0p0, Little endian.
-* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: nRF51822_xxAA
-VTarget = 3.293V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 4
-Software-Breakpoints: 8192
-Watchpoints:          2
-JTAG speed: 4000 kHz
- 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
-</pre>
-</body>
-</html>

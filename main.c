@@ -147,7 +147,9 @@ static pstorage_handle_t 				 flash_handle_last;
 static ble_advdata_t             advdata;
 static ble_advdata_manuf_data_t  manuf_data;
 static uint8_t                   flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
-static char 									 	 *advname = "5TM_";
+static uint8_t adv_name[22] = "CST@_Time:" ;
+
+//static char 									 	 *advname = "Time";
 //#define START_ADDRESS 0x1B000	  /*Data recordes start address, 12KB program flash from 0x160005*/
 static uint16_t  Vtm_humi=0, Vtm_unknow=0, Vtm_temp=0;  //sensor data;
 static int32_t   nrf_temp=0;
@@ -327,18 +329,18 @@ static void char_notify(void)
  *          parameters of the device. It also sets the permissions.
  *
  */
-static void gap_params_init(char *sadvname)
+static void gap_params_init(void)
 {
     uint32_t                err_code;
 		uint8_t 								i;
 //    ble_gap_conn_params_t   gap_conn_params;
     ble_gap_conn_sec_mode_t sec_mode;
-		char adv_name[23] = "CSTNET_" ;
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&sec_mode);
 		ble_gap_addr_t  	p_addr;
     sd_ble_gap_address_get	(	&p_addr	);
 //		sprintf(adv_name, "CSTNET_%4s:%x%x%x%x%x%x",sadvname,p_addr.addr[5],p_addr.addr[4],p_addr.addr[3],p_addr.addr[2],p_addr.addr[1],p_addr.addr[0]);
-    for (i=7;sadvname[i-7];i++) adv_name[i]=sadvname[i-7];
+//    for (i=7;sadvname[i-7];i++) adv_name[i]=sadvname[i-7];
+		i = 10;
 		adv_name[i++] = char_hex(p_addr.addr[5]>>4);		adv_name[i++] = char_hex(p_addr.addr[5]);
 		adv_name[i++] = char_hex(p_addr.addr[4]>>4);		adv_name[i++] = char_hex(p_addr.addr[4]);
 		adv_name[i++] = char_hex(p_addr.addr[3]>>4);		adv_name[i++] = char_hex(p_addr.addr[3]);
@@ -347,7 +349,7 @@ static void gap_params_init(char *sadvname)
 		adv_name[i++] = char_hex(p_addr.addr[0]>>4);		adv_name[i++] = char_hex(p_addr.addr[0]);
 		err_code = sd_ble_gap_device_name_set(&sec_mode,
                                           (const uint8_t *)adv_name ,
-                                          24);
+                                          22);
     APP_ERROR_CHECK(err_code);
 }
 
@@ -451,9 +453,9 @@ static void service_add(void)
         cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
 
 				memset(&char_md, 0, sizeof(char_md));
-				char_md.char_props.broadcast = 1;
-//				char_md.char_props.read   = 1;
-//		    char_md.char_props.write   = 1;
+//				char_md.char_props.broadcast = 1;
+				char_md.char_props.read   = 1;
+		    char_md.char_props.write  = 1;
 				char_md.char_props.notify = 1;
 				char_md.p_char_user_desc  = NULL;
 				char_md.p_char_pf         = NULL;
@@ -463,6 +465,8 @@ static void service_add(void)
 
 				memset(&attr_md, 0, sizeof(attr_md));
 				BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.read_perm);
+				BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.write_perm);
+
 //				attr_md.read_perm  = bas_init.battery_level_char_attr_md.read_perm;
 ////				attr_md.write_perm = bas_init.battery_level_char_attr_md.write_perm;
 				attr_md.vloc       = BLE_GATTS_VLOC_STACK;
@@ -483,8 +487,9 @@ static void service_add(void)
 				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
 																									 &attr_char_value,
 																									 &m_bas.Vtm_date_time_handles);
-				char_md.char_props.broadcast = 0;
-				char_md.char_props.read   = 1;
+//				char_md.char_props.broadcast = 0;
+//				char_md.char_props.read   = 1;
+				attr_char_value.init_len  = sizeof(uint32_t);
 				char_md.char_props.write   = 0;
 				char_md.char_props.notify = 0;
 				char_md.p_cccd_md         = (char_md.char_props.notify) ? &cccd_md : NULL;
@@ -516,7 +521,7 @@ static void service_add(void)
 																									 &attr_char_value,
 																									 &m_bas.Nrf_temp_level_handles);
 
-
+				char_md.char_props.write   = 1;
 				BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_REPORT_CHAR);
 				attr_char_value.p_uuid    = &ble_uuid;
 				err_code = sd_ble_gatts_characteristic_add(m_bas.service_handle, &char_md,
@@ -644,7 +649,7 @@ static void s5tm_timeout_handler(void * p_context)
 				sd_temp_get(&nrf_temp);  													//Get Cpu tempreature
 
 //				data_saved = (Vtm_humi << 16) + Vtm_temp ;
-				data_saved = (timer_counter<<16)+ batt_lvl_in_milli_volts ; //test flash write
+				data_saved = timer_counter ; //test flash write
 
 						pstorage_handle_t 		flash_handle;
 //						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%PSTORAGE_MAX_APPLICATIONS), &flash_handle);
@@ -786,7 +791,23 @@ static void on_write(ble_evt_t * p_ble_evt)
 {
 //		uint32_t err_code;
     ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
-    if ((p_evt_write->handle == m_bas.Vtm_date_time_handles.cccd_handle) && (p_evt_write->len == 2))
+    if ((p_evt_write->handle == m_bas.Vtm_date_time_handles.value_handle) && (p_evt_write->len == 1))
+			flash_block_num = *p_evt_write->data;
+		else if ((p_evt_write->handle == m_bas.Nrf_name_handles.value_handle) && (p_evt_write->len == 4))
+			{
+				adv_name[0] = *p_evt_write->data;
+				adv_name[1] = *(p_evt_write->data+1);
+				adv_name[2] = *(p_evt_write->data+2);
+				adv_name[3] = *(p_evt_write->data+3);
+				gap_params_init();
+				m_addl_adv_manuf_data[16] = adv_name[0];
+				m_addl_adv_manuf_data[17] = adv_name[1];
+				m_addl_adv_manuf_data[18] = adv_name[2];
+				m_addl_adv_manuf_data[19] = adv_name[3];
+			  ble_advdata_set(&advdata, NULL);
+
+			}
+    else if ((p_evt_write->handle == m_bas.Vtm_date_time_handles.cccd_handle) && (p_evt_write->len == 2))
 //    if ((p_evt_write->handle == m_bas.battery_level_handles.cccd_handle) && (p_evt_write->len == 2))
     {
         // CCCD written. Start notifications
@@ -798,12 +819,16 @@ static void on_write(ble_evt_t * p_ble_evt)
 //						timer_shifting = (timer_counter/TIME_PERIOD)& 0xfffffffC;  // intergreat /4
 						timer_shifting = 0;
 						pstorage_handle_t flash_handle;
+						uint16_t len=4;
+//						sd_ble_gatts_value_get(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&flash_block_num);
 						if (flash_block_num > PSTORAGE_MAX_APPLICATIONS) flash_block_num = PSTORAGE_MAX_APPLICATIONS-1;
 						pstorage_block_identifier_get(&flash_base_handle,flash_block_num, &flash_handle);
 						pstorage_load((uint8_t *)flash_page_data, &flash_handle,1024,0);
 						flash_page_data[259] = flash_block_num-- ;
 						flash_page_data[258] = PSTORAGE_MAX_APPLICATIONS;
 						flash_page_data[257] = PSTORAGE_PAGE_SIZE;
+						flash_page_data[256] = TIME_PERIOD;
+						sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&flash_block_num);
             char_notify();
 						application_timers_start();
         }
@@ -840,6 +865,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
             APP_ERROR_CHECK(err_code);
 //						flash_block_num = ((timer_shifting)>>8)%PSTORAGE_MAX_APPLICATIONS;
 						flash_block_num = (timer_counter/(TIME_PERIOD*(PSTORAGE_PAGE_SIZE/4)))%PSTORAGE_MAX_APPLICATIONS;
+//						ss = HTONL(timer_counter);
+						sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&flash_block_num);
 // Updata server data for display  
 						ss = HTONL(batt_lvl_in_milli_volts);
 						sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
@@ -849,10 +876,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						sd_ble_gatts_value_set(m_bas.Vtm_humi_level_handles.value_handle,0, &len, (uint8_t *)&ss);
 						ss = HTONL(nrf_temp);
 						sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-						ss = HTONL(timer_counter);
-						sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&ss);
-						ss = (*(uint32_t *)advname);
-						err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)&ss);
+//						ss = (*(uint32_t *)adv_name);
+						err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)adv_name);
 
             break;
 
@@ -1037,7 +1062,7 @@ int main(void)
 		param.block_count = PSTORAGE_MAX_APPLICATIONS;                  	//Select 10 blocks, total of 160 bytes
 		param.cb          = example_cb_handler;   	//Set the pstorage callback handler
 		err_code = pstorage_register(&param, &flash_base_handle);
-    gap_params_init(advname);
+    gap_params_init();
 //    sd_ble_gap_tx_power_set(4);
 		service_add();
 		connectable_adv_init();
@@ -1046,7 +1071,11 @@ int main(void)
 			APP_ERROR_CHECK_BOOL(sizeof(flags) == ADV_FLAGS_LEN);  // Assert that these two values of the same.
 			// Build and set advertising data
 			memset(&advdata, 0, sizeof(advdata));
-			*( (uint32_t *) (m_addl_adv_manuf_data+16)) = *(uint32_t *) advname;
+//			*( (uint32_t *) (m_addl_adv_manuf_data+16)) = *(uint32_t *) adv_name;
+			m_addl_adv_manuf_data[16] = adv_name[0];
+			m_addl_adv_manuf_data[17] = adv_name[1];
+			m_addl_adv_manuf_data[18] = adv_name[2];
+			m_addl_adv_manuf_data[19] = adv_name[3];
 			manuf_data.company_identifier = COMPANY_IDENTIFIER;
 			manuf_data.data.size          = ADV_ADDL_MANUF_DATA_LEN;
 			manuf_data.data.p_data        = m_addl_adv_manuf_data;
