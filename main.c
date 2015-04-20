@@ -118,6 +118,21 @@ static ble_bas_t                             m_bas;                             
 
 #define DEAD_BEEF                     0xDEADBEEF                                    /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+#ifdef BEACON
+	#define UART_POWER  				12   //5TM Power
+	#define UART_RX							17
+	#define UART_TX							18
+	#define LED_PIN             19
+	#define ADC_AIN						  1 
+#else
+	#define UART_POWER  				13   //5TM Power
+	#define UART_RX							12
+	#define UART_TX							10
+	#define ADC_AIN						  4
+	#define LED_PIN             20
+#endif
+
+
 /**@brief 128-bit UUID base List. */
 //static const ble_uuid128_t m_base_uuid128 =
 //{
@@ -147,7 +162,11 @@ static pstorage_handle_t 				 flash_handle_last;
 static ble_advdata_t             advdata;
 static ble_advdata_manuf_data_t  manuf_data;
 static uint8_t                   flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
-static uint8_t adv_name[22] = "CST@_Time:" ;
+#ifdef BEACON
+	static uint8_t adv_name[22] = "BCON_Time:" ;
+#else
+	static uint8_t adv_name[22] = "CST@_Time:" ;
+#endif
 
 //static char 									 	 *advname = "Time";
 //#define START_ADDRESS 0x1B000	  /*Data recordes start address, 12KB program flash from 0x160005*/
@@ -221,6 +240,7 @@ void battery_start(uint32_t AnalogInput)
 //	
 
 		if (AnalogInput==4)  AnalogInput=ADC_CONFIG_PSEL_AnalogInput4 ;
+		else if (AnalogInput==1)  AnalogInput=ADC_CONFIG_PSEL_AnalogInput1 ;
 		else  AnalogInput=ADC_CONFIG_PSEL_AnalogInput6 ;
     // Configure ADC
     NRF_ADC->INTENSET   = AAR_INTENSET_END_Disabled;   				//ADC  Interrupt disabled. Must be disable.
@@ -600,20 +620,20 @@ static void example_cb_handler(pstorage_handle_t  * handle,
 static void s5tm_timeout_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
-		uint8_t data_id = 0, data_pos = false;
+		uint8_t data_id = 1, data_pos = false;
     static uint32_t data_saved ;  //must be STATIC for pstorage_store()
 		uint32_t err_code=0;
 		uint8_t timer_flash_id = ((uint8_t)( timer_counter/TIME_PERIOD));
 //		uint16_t len = 4;
 //		timer_counter+=TIME_PERIOD;
-				battery_start(4);	 //For 3.3V boster
+				battery_start(ADC_AIN);	 //For 3.3V boster
 //					battery_start(6);  //For 3.7V Li Battery 
 	
 //				ble_bas_battery_level_update(&m_bas,batt_lvl_in_milli_volts/100);  //For display 3.0V*100 on IOS
 				
-				nrf_gpio_pin_set (13);												//Open power and UART for 5TM 
+				nrf_gpio_pin_set (UART_POWER);												//Open power and UART for 5TM 
 				NRF_UART0->POWER = (UART_POWER_POWER_Enabled << UART_POWER_POWER_Pos);
-				simple_uart_config(NULL, 10, NULL, 12, false);
+				simple_uart_config(NULL, UART_TX, NULL, UART_RX, false);
 				uint8_t cr; //rx_count=10;
 				Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
 				for (uint8_t i=0;i<50;i++){										//Get date from 5tm 
@@ -645,7 +665,7 @@ static void s5tm_timeout_handler(void * p_context)
 					}
 		}	
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
-				nrf_gpio_pin_clear (13);
+				nrf_gpio_pin_clear (UART_POWER);
 				sd_temp_get(&nrf_temp);  													//Get Cpu tempreature
 
 //				data_saved = (Vtm_humi << 16) + Vtm_temp ;
@@ -850,7 +870,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
     {
         case BLE_GAP_EVT_CONNECTED:
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
-						nrf_gpio_pin_set (20);												//Led on.
+						nrf_gpio_pin_set (LED_PIN);												//Led on.
 						application_timers_start();
 						ble_gap_conn_params_t   gap_conn_params;
 						gap_conn_params.min_conn_interval = ((4 * APP_CFG_CONNECTION_INTERVAL) / 5);  //= 10
@@ -878,6 +898,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
 //						ss = (*(uint32_t *)adv_name);
 						err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)adv_name);
+						application_timers_start();
 
             break;
 
@@ -887,7 +908,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
            
         case BLE_GAP_EVT_DISCONNECTED:
 //					spi_flash_pages_count=0;
-						nrf_gpio_pin_clear(20);						//LED off.
+						nrf_gpio_pin_clear(LED_PIN);						//LED off.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             application_timers_stop();
  						advertising_start();
@@ -993,8 +1014,11 @@ static void ble_stack_init(void)
 {
     uint32_t err_code;
     // Initialize the SoftDevice handler module.
-    SOFTDEVICE_HANDLER_INIT(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, false);
+//#ifdef BEACON
 //    SOFTDEVICE_HANDLER_INIT(NRF_CLOCK_LFCLKSRC_RC_250_PPM_250MS_CALIBRATION, false);
+//#else
+    SOFTDEVICE_HANDLER_INIT(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, false);
+//#endif
     // Enable BLE stack 
     ble_enable_params_t ble_enable_params;
     memset(&ble_enable_params, 0, sizeof(ble_enable_params));
@@ -1033,21 +1057,23 @@ static void scheduler_init(void)
 int main(void)
 {
     uint32_t err_code = NRF_SUCCESS;
-		NRF_GPIO->PIN_CNF[20] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+		NRF_GPIO->PIN_CNF[LED_PIN] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
                                             | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
                                             | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
                                             | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
                                             | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
-		nrf_gpio_pin_set (20);												//Led on.
-
+		nrf_gpio_pin_set (LED_PIN);												//Led on.
 		pstorage_module_param_t		 param;
-//		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_MODE_ON);
+#ifndef BEACON
 	 	nrf_delay_ms(20);  //There must be 20ms waitting for AT45DB161 ready from power on.
 		uint32_t *spi_base_address = spi_master_init(SPI0, SPI_MODE0, 0);
 		uint8_t tx_data[ ]={0XB9};
     spi_master_tx_rx(spi_base_address, 1, (const uint8_t *)tx_data, tx_data);
-
-		NRF_GPIO->PIN_CNF[13] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+#else
+		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_MODE_ON);
+	
+#endif
+		NRF_GPIO->PIN_CNF[UART_POWER] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
                                             | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos)
                                             | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
                                             | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
@@ -1091,7 +1117,7 @@ int main(void)
 //    err_code = app_timer_start(m_s5tm_timer_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
     err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(1000, APP_TIMER_PRESCALER), NULL);
 
-		nrf_gpio_pin_clear (20);												//Led off.
+		nrf_gpio_pin_clear (LED_PIN);												//Led off.
 
 		for(;;)	{
       app_sched_execute();

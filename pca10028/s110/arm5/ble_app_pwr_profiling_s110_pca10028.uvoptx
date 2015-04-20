@@ -153,40 +153,7 @@
           <Name>-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0nrf51xxx -FS00 -FL0200000 -FP0($$Device:nRF51822_xxAA$Flash\nrf51xxx.flm))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>1032</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>95858</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\main.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>1034</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>C:\Users\Yelun\Documents\GitHub\NRF51822_Datelog\main.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -243,12 +210,17 @@
           <WinNumber>1</WinNumber>
           <ItemText>m_next_page_addr</ItemText>
         </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>adv_name</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>PSTORAGE_DATA_START_ADDR</ItemText>
+          <ItemText>\\nrf51422_xxac_s110\../../../main.c\advdata.p_manuf_specific_data-&gt;data.p_data</ItemText>
         </Mm>
       </MemoryWindow1>
       <Tracepoint>
@@ -319,10 +291,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>47</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>787</TopLine>
-      <CurrentLine>807</CurrentLine>
+      <TopLine>1004</TopLine>
+      <CurrentLine>1022</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -337,8 +309,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>91</TopLine>
+      <CurrentLine>99</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\spi_master.c</PathWithFileName>
       <FilenameWithoutPath>spi_master.c</FilenameWithoutPath>
@@ -351,10 +323,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>16</ColumnNumber>
+      <ColumnNumber>45</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>122</TopLine>
+      <CurrentLine>127</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\ble_bas.c</PathWithFileName>
       <FilenameWithoutPath>ble_bas.c</FilenameWithoutPath>
@@ -425,8 +397,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>157</TopLine>
+      <CurrentLine>161</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>RTE\Device\nRF51822_xxAA\arm_startup_nrf51.s</PathWithFileName>
       <FilenameWithoutPath>arm_startup_nrf51.s</FilenameWithoutPath>
@@ -511,7 +483,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>32</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
@@ -543,7 +515,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>39</ColumnNumber>
+      <ColumnNumber>19</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
@@ -617,8 +589,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>84</TopLine>
+      <CurrentLine>85</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>RTE\nRF_Drivers\nRF51822_xxAA\simple_uart.c</PathWithFileName>
       <FilenameWithoutPath>simple_uart.c</FilenameWithoutPath>
@@ -649,8 +621,8 @@
       <Focus>0</Focus>
       <ColumnNumber>44</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>831</TopLine>
-      <CurrentLine>832</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>RTE\nRF_Drivers\nRF51822_xxAA\pstorage.c</PathWithFileName>
       <FilenameWithoutPath>pstorage.c</FilenameWithoutPath>
@@ -679,10 +651,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>8</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>26</TopLine>
-      <CurrentLine>33</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>RTE\nRF_Drivers\nRF51822_xxAA\pstorage_platform.h</PathWithFileName>
       <FilenameWithoutPath>pstorage_platform.h</FilenameWithoutPath>
@@ -801,8 +773,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1091</TopLine>
+      <CurrentLine>1101</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>RTE\nRF_Libraries\nRF51822_xxAA\app_timer.c</PathWithFileName>
       <FilenameWithoutPath>app_timer.c</FilenameWithoutPath>
