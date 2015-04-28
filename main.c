@@ -37,7 +37,7 @@ static ble_bas_t                             m_bas;                             
 //      The following values shall be altered when doing power profiling.
 
 #define APP_CFG_NON_CONN_ADV_TIMEOUT  30                                            /**< Time for which the device must be advertising in non-connectable mode (in seconds). */
-#define APP_CFG_CHAR_NOTIF_TIMEOUT    50000                                          /**< Time for which the device must continue to send notifications once connected to central (in milli seconds). */
+#define APP_CFG_CHAR_NOTIF_TIMEOUT    5000                                          /**< Time for which the device must continue to send notifications once connected to central (in milli seconds). */
 #define APP_CFG_ADV_DATA_LEN          31                                            /**< Required length of the complete advertisement packet. This should be atleast 8 in order to accommodate flag field and other mandatory fields and one byte of manufacturer specific data. */
 #define APP_CFG_CONNECTION_INTERVAL   10                                            /**24 < Connection interval used by the central (in milli seconds). This application will be sending one notification per connection interval. A repeating timer will be started with timeout value equal to this value and one notification will be sent everytime this timer expires. */
 #define APP_CFG_CHAR_LEN              20                                            /**< Size of the characteristic value being notified (in bytes). */
@@ -118,12 +118,25 @@ static ble_bas_t                             m_bas;                             
 
 #define DEAD_BEEF                     0xDEADBEEF                                    /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+/*------------------------------------------------------------------------------------------------*/
+//#define V5TM              			// for 5TM sensor  data log,  300Secs period.  Comment for timecounter test, 5Secs period.
+#define BEACON   							  // For iBeacon mode test
+//#define SHENZHEN
+
 #ifdef BEACON
 	#define UART_POWER  				12   //5TM Power
 	#define UART_RX							17
 	#define UART_TX							18
 	#define LED_PIN             19
 	#define ADC_AIN						  1 
+
+#elif defined(SHENZHEN)
+	#define UART_POWER  				12   //5TM Power
+	#define UART_RX							15
+	#define UART_TX							16
+	#define ADC_AIN						  4
+	#define LED_PIN             20
+
 #else
 	#define UART_POWER  				13   //5TM Power
 	#define UART_RX							12
@@ -132,6 +145,14 @@ static ble_bas_t                             m_bas;                             
 	#define LED_PIN             20
 #endif
 
+#ifdef V5TM
+	#define TIME_PERIOD	 				300       /*5TM time period in seconds*/
+
+#else
+	#define TIME_PERIOD	 				 5      /*For test  time period in seconds*/
+#endif
+
+#define PSTORAGE_PAGE_SIZE		1024
 
 /**@brief 128-bit UUID base List. */
 //static const ble_uuid128_t m_base_uuid128 =
@@ -164,6 +185,8 @@ static ble_advdata_manuf_data_t  manuf_data;
 static uint8_t                   flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
 #ifdef BEACON
 	static uint8_t adv_name[22] = "BCON_Time:" ;
+#elif defined(V5TM)
+	static uint8_t adv_name[22] = "CSTN_5TM_:" ;
 #else
 	static uint8_t adv_name[22] = "CST@_Time:" ;
 #endif
@@ -195,8 +218,6 @@ void pstorage_sys_event_handler (uint32_t p_evt);
 static void application_timers_stop(void);
 static void application_timers_start(void);
 
-#define TIME_PERIOD	 			5       /*5TM time period in seconds*/
-#define PSTORAGE_PAGE_SIZE		1024
 
 ////////////////////////////////////////////////
 /**@brief Callback function for asserts in the SoftDevice.
@@ -632,6 +653,8 @@ static void s5tm_timeout_handler(void * p_context)
 //				ble_bas_battery_level_update(&m_bas,batt_lvl_in_milli_volts/100);  //For display 3.0V*100 on IOS
 				
 				nrf_gpio_pin_set (UART_POWER);												//Open power and UART for 5TM 
+//				nrf_gpio_pin_clear (UART_POWER);												//Open power and UART for 5TM 
+
 				NRF_UART0->POWER = (UART_POWER_POWER_Enabled << UART_POWER_POWER_Pos);
 				simple_uart_config(NULL, UART_TX, NULL, UART_RX, false);
 				uint8_t cr; //rx_count=10;
@@ -665,12 +688,16 @@ static void s5tm_timeout_handler(void * p_context)
 					}
 		}	
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
+//				nrf_gpio_cfg_output(UART_RX);   //Add this line will be more power.
+
 				nrf_gpio_pin_clear (UART_POWER);
+//				nrf_gpio_pin_set (UART_POWER);
 				sd_temp_get(&nrf_temp);  													//Get Cpu tempreature
-
-//				data_saved = (Vtm_humi << 16) + Vtm_temp ;
+#ifdef V5TM
+				data_saved = (Vtm_humi << 16) + Vtm_temp ;
+#else
 				data_saved = timer_counter ; //test flash write
-
+#endif
 						pstorage_handle_t 		flash_handle;
 //						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%PSTORAGE_MAX_APPLICATIONS), &flash_handle);
 						pstorage_block_identifier_get(&flash_base_handle,((timer_counter/(TIME_PERIOD*(PSTORAGE_PAGE_SIZE/4)))%PSTORAGE_MAX_APPLICATIONS), &flash_handle);
@@ -896,16 +923,15 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 						sd_ble_gatts_value_set(m_bas.Vtm_humi_level_handles.value_handle,0, &len, (uint8_t *)&ss);
 						ss = HTONL(nrf_temp);
 						sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-//						ss = (*(uint32_t *)adv_name);
 						err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)adv_name);
-						application_timers_start();
+//						application_timers_start();
 
             break;
 
         case BLE_EVT_TX_COMPLETE:
             char_notify();
-            break;
-           
+						break;
+
         case BLE_GAP_EVT_DISCONNECTED:
 //					spi_flash_pages_count=0;
 						nrf_gpio_pin_clear(LED_PIN);						//LED off.
@@ -1056,6 +1082,7 @@ static void scheduler_init(void)
 
 int main(void)
 {
+//		timer_counter = 0x007DCEA4;
     uint32_t err_code = NRF_SUCCESS;
 		NRF_GPIO->PIN_CNF[LED_PIN] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
                                             | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
@@ -1071,13 +1098,21 @@ int main(void)
     spi_master_tx_rx(spi_base_address, 1, (const uint8_t *)tx_data, tx_data);
 #else
 		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_MODE_ON);
-	
+//			NRF_GPIO->PIN_CNF[UART_POWER] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+//                                            | (GPIO_PIN_CNF_DRIVE_H0S1 << GPIO_PIN_CNF_DRIVE_Pos)
+//                                            | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
+//                                            | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
+//                                            | (GPIO_PIN_CNF_DIR_Input << GPIO_PIN_CNF_DIR_Pos);
+//    nrf_gpio_cfg_input(UART_POWER, NRF_GPIO_PIN_PULLUP);
+
 #endif
 		NRF_GPIO->PIN_CNF[UART_POWER] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
                                             | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos)
                                             | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
                                             | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
                                             | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
+//						nrf_gpio_pin_clear (UART_POWER);
+
 
     timers_init();
     ble_stack_init();
@@ -1085,8 +1120,8 @@ int main(void)
 
 		pstorage_init();
 		param.block_size  = PSTORAGE_PAGE_SIZE;                   //Select block size of 16 bytes
-		param.block_count = PSTORAGE_MAX_APPLICATIONS;                  	//Select 10 blocks, total of 160 bytes
-		param.cb          = example_cb_handler;   	//Set the pstorage callback handler
+		param.block_count = PSTORAGE_MAX_APPLICATIONS;           	//Select 10 blocks, total of 160 bytes
+		param.cb          = example_cb_handler;   								//Set the pstorage callback handler
 		err_code = pstorage_register(&param, &flash_base_handle);
     gap_params_init();
 //    sd_ble_gap_tx_power_set(4);
