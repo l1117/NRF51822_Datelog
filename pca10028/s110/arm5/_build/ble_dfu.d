@@ -1,5 +1,5 @@
-.\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_dfu\ble_dfu.c
-.\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\ble_services\ble_dfu\ble_dfu.h
+.\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\2.0.0\ble_services\ble_dfu\ble_dfu.c
+.\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\2.0.0\ble_services\ble_dfu\ble_dfu.h
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\ARMCC\bin\..\include\stdint.h
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_gatts.h
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_SoftDevice_S110\7.1.0-3\headers\ble_types.h
@@ -15,7 +15,7 @@
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_BLE\1.1.0\common\ble_srv_common.h
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\ARMCC\bin\..\include\stdbool.h
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\app_util.h
-.\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\1.1.4\Device\Include\compiler_abstraction.h
+.\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\7.1.0\Device\Include\compiler_abstraction.h
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\PACK\NordicSemiconductor\nRF_Libraries\1.1.0\util\nordic_common.h
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\ARMCC\bin\..\include\string.h
 .\_build\ble_dfu.o: C:\Keil_v5\ARM\ARMCC\bin\..\include\stddef.h

@@ -71,8 +71,8 @@ static ble_bas_t                             m_bas;                             
 #define CHAR_NOTIF_TIMEOUT_IN_TKS     APP_TIMER_TICKS(APP_CFG_CHAR_NOTIF_TIMEOUT,\
                                                       APP_TIMER_PRESCALER)          /**< Time for which the device must continue to send notifications once connected to central (in ticks). */
 
-#define CONNECTABLE_ADV_INTERVAL      MSEC_TO_UNITS(1000, UNIT_0_625_MS)              /**< The advertising interval for connectable advertisement (20 ms). This value can vary between 20ms to 10.24s. */
-#define NON_CONNECTABLE_ADV_INTERVAL  MSEC_TO_UNITS(1000, UNIT_0_625_MS)             /**< The advertising interval for non-connectable advertisement (100 ms). This value can vary between 100ms to 10.24s). */
+#define CONNECTABLE_ADV_INTERVAL      MSEC_TO_UNITS(TIME_STEP*1000, UNIT_0_625_MS)              /**< The advertising interval for connectable advertisement (20 ms). This value can vary between 20ms to 10.24s. */
+#define NON_CONNECTABLE_ADV_INTERVAL  MSEC_TO_UNITS(TIME_STEP*1000, UNIT_0_625_MS)             /**< The advertising interval for non-connectable advertisement (100 ms). This value can vary between 100ms to 10.24s). */
 #define CONNECTABLE_ADV_TIMEOUT       0   //5  //30                                            /**< Time for which the device must be advertising in connectable mode (in seconds). */
 
 #define SLAVE_LATENCY                 0                                             /**< Slave latency. */
@@ -119,8 +119,8 @@ static ble_bas_t                             m_bas;                             
 #define DEAD_BEEF                     0xDEADBEEF                                    /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
 /*------------------------------------------------------------------------------------------------*/
-//#define V5TM              			// for 5TM sensor  data log,  300Secs period.  Comment for timecounter test, 5Secs period.
-#define BEACON   							  // For iBeacon mode test
+#define V5TM              			// for 5TM sensor  data log,  300Secs period.  Comment for timecounter test, 5Secs period.
+//#define BEACON   							  // For iBeacon mode test
 //#define SHENZHEN
 
 #ifdef BEACON
@@ -146,11 +146,17 @@ static ble_bas_t                             m_bas;                             
 #endif
 
 #ifdef V5TM
-	#define TIME_PERIOD	 				300       /*5TM time period in seconds*/
+	#define TIME_PERIOD	 				5       /*5TM time period in seconds*/
 
 #else
 	#define TIME_PERIOD	 				 5      /*For test  time period in seconds*/
 #endif
+
+#define TIME_STEP 				     1         
+#if (TIME_PERIOD % TIME_STEP) 
+	#error "timer step not TIME_PERIOD int times"
+#endif
+
 
 #define PSTORAGE_PAGE_SIZE		1024
 
@@ -217,7 +223,6 @@ void pstorage_sys_event_handler (uint32_t p_evt);
 
 static void application_timers_stop(void);
 static void application_timers_start(void);
-
 
 ////////////////////////////////////////////////
 /**@brief Callback function for asserts in the SoftDevice.
@@ -720,7 +725,8 @@ static void s5tm_timeout_handler(void * p_context)
 static void timecounter_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
-		if (++timer_counter%TIME_PERIOD){  
+		timer_counter += TIME_STEP;
+		if (timer_counter%TIME_PERIOD){  
 				*( (uint32_t *) m_addl_adv_manuf_data) = timer_counter ;
 			uint32_t	err_code = ble_advdata_set(&advdata, NULL);
 //				APP_ERROR_CHECK(err_code);
@@ -875,7 +881,13 @@ static void on_write(ble_evt_t * p_ble_evt)
 						flash_page_data[258] = PSTORAGE_MAX_APPLICATIONS;
 						flash_page_data[257] = PSTORAGE_PAGE_SIZE;
 						flash_page_data[256] = TIME_PERIOD;
-						sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&flash_block_num);
+						ble_gatts_value_t gatts_value;
+						memset(&gatts_value, 0, sizeof(gatts_value));
+						gatts_value.len     = sizeof(uint32_t);
+						gatts_value.offset  = 0;
+						gatts_value.p_value = (uint8_t *)&flash_block_num;
+
+						sd_ble_gatts_value_set(m_bas.conn_handle, m_bas.Vtm_date_time_handles.value_handle, &gatts_value);
             char_notify();
 						application_timers_start();
         }
@@ -913,17 +925,27 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 //						flash_block_num = ((timer_shifting)>>8)%PSTORAGE_MAX_APPLICATIONS;
 						flash_block_num = (timer_counter/(TIME_PERIOD*(PSTORAGE_PAGE_SIZE/4)))%PSTORAGE_MAX_APPLICATIONS;
 //						ss = HTONL(timer_counter);
-						sd_ble_gatts_value_set(m_bas.Vtm_date_time_handles.value_handle,0, &len, (uint8_t *)&flash_block_num);
+						ble_gatts_value_t gatts_value;
+						memset(&gatts_value, 0, sizeof(gatts_value));
+						gatts_value.len     = sizeof(uint32_t);
+						gatts_value.offset  = 0;
+						gatts_value.p_value = (uint8_t *)&flash_block_num;
+
+						sd_ble_gatts_value_set(m_bas.conn_handle, m_bas.Vtm_date_time_handles.value_handle, &gatts_value);
 // Updata server data for display  
 						ss = HTONL(batt_lvl_in_milli_volts);
-						sd_ble_gatts_value_set(m_bas.battery_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+						gatts_value.p_value = (uint8_t *)&ss;
+
+						sd_ble_gatts_value_set(m_bas.conn_handle, m_bas.battery_level_handles.value_handle, &gatts_value);
 						ss = HTONL(Vtm_temp);
-						sd_ble_gatts_value_set(m_bas.Vtm_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+						sd_ble_gatts_value_set(m_bas.conn_handle,m_bas.Vtm_temp_level_handles.value_handle, &gatts_value);
 						ss = HTONL(Vtm_humi);
-						sd_ble_gatts_value_set(m_bas.Vtm_humi_level_handles.value_handle,0, &len, (uint8_t *)&ss);
+						sd_ble_gatts_value_set(m_bas.conn_handle,m_bas.Vtm_humi_level_handles.value_handle, &gatts_value);
 						ss = HTONL(nrf_temp);
-						sd_ble_gatts_value_set(m_bas.Nrf_temp_level_handles.value_handle,0, &len, (uint8_t *)&ss);
-						err_code=sd_ble_gatts_value_set(m_bas.Nrf_name_handles.value_handle,0, &len, (uint8_t *)adv_name);
+						sd_ble_gatts_value_set(m_bas.conn_handle,m_bas.Nrf_temp_level_handles.value_handle, &gatts_value);
+						gatts_value.p_value = (uint8_t *)adv_name;
+
+						err_code=sd_ble_gatts_value_set(m_bas.conn_handle,m_bas.Nrf_name_handles.value_handle, &gatts_value);
 //						application_timers_start();
 
             break;
@@ -944,11 +966,12 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
             break;
 
         case BLE_GATTS_EVT_SYS_ATTR_MISSING:
-            err_code = sd_ble_gatts_sys_attr_set(m_conn_handle, NULL, 0);
+            err_code = sd_ble_gatts_sys_attr_set(m_conn_handle, NULL, 0
+																				,BLE_GATTS_SYS_ATTR_FLAG_SYS_SRVCS | BLE_GATTS_SYS_ATTR_FLAG_USR_SRVCS);
             break;
 
         case BLE_GAP_EVT_TIMEOUT:
-            if (p_ble_evt->evt.gap_evt.params.timeout.src == BLE_GAP_TIMEOUT_SRC_ADVERTISEMENT)
+            if (p_ble_evt->evt.gap_evt.params.timeout.src == BLE_GAP_TIMEOUT_SRC_ADVERTISING)
             { 
 								advertising_start();
                 // Go to system-off mode (this function will not return; wakeup will cause a reset).
@@ -1043,7 +1066,7 @@ static void ble_stack_init(void)
 //#ifdef BEACON
 //    SOFTDEVICE_HANDLER_INIT(NRF_CLOCK_LFCLKSRC_RC_250_PPM_250MS_CALIBRATION, false);
 //#else
-    SOFTDEVICE_HANDLER_INIT(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, false);
+    SOFTDEVICE_HANDLER_INIT(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, NULL);
 //#endif
     // Enable BLE stack 
     ble_enable_params_t ble_enable_params;
@@ -1097,7 +1120,7 @@ int main(void)
 		uint8_t tx_data[ ]={0XB9};
     spi_master_tx_rx(spi_base_address, 1, (const uint8_t *)tx_data, tx_data);
 #else
-		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_MODE_ON);
+		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_ENABLE);
 //			NRF_GPIO->PIN_CNF[UART_POWER] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
 //                                            | (GPIO_PIN_CNF_DRIVE_H0S1 << GPIO_PIN_CNF_DRIVE_Pos)
 //                                            | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
@@ -1150,7 +1173,7 @@ int main(void)
 			}
 		advertising_start();
 //    err_code = app_timer_start(m_s5tm_timer_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
-    err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(1000, APP_TIMER_PRESCALER), NULL);
+    err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
 
 		nrf_gpio_pin_clear (LED_PIN);												//Led off.
 
