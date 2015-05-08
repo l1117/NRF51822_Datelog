@@ -146,7 +146,7 @@ static ble_bas_t                             m_bas;                             
 #endif
 
 #ifdef V5TM
-	#define TIME_PERIOD	 				5       /*5TM time period in seconds*/
+	#define TIME_PERIOD	 				300       /*5TM time period in seconds*/
 
 #else
 	#define TIME_PERIOD	 				 5      /*For test  time period in seconds*/
@@ -157,6 +157,13 @@ static ble_bas_t                             m_bas;                             
 	#error "timer step not TIME_PERIOD int times"
 #endif
 
+#ifdef BEACON
+	static uint8_t adv_name[22] = "BCON_Time:" ;
+#elif defined(V5TM)
+	static uint8_t adv_name[22] = "CSTN_5TM0:" ;
+#else
+	static uint8_t adv_name[22] = "CST@_Time:" ;
+#endif
 
 #define PSTORAGE_PAGE_SIZE		1024
 
@@ -189,13 +196,6 @@ static pstorage_handle_t 				 flash_handle_last;
 static ble_advdata_t             advdata;
 static ble_advdata_manuf_data_t  manuf_data;
 static uint8_t                   flags = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE; //BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
-#ifdef BEACON
-	static uint8_t adv_name[22] = "BCON_Time:" ;
-#elif defined(V5TM)
-	static uint8_t adv_name[22] = "CSTN_5TM_:" ;
-#else
-	static uint8_t adv_name[22] = "CST@_Time:" ;
-#endif
 
 //static char 									 	 *advname = "Time";
 //#define START_ADDRESS 0x1B000	  /*Data recordes start address, 12KB program flash from 0x160005*/
@@ -1173,7 +1173,7 @@ int main(void)
 			}
 		advertising_start();
 //    err_code = app_timer_start(m_s5tm_timer_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
-    err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER), NULL);
+    err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(TIME_STEP*1000, APP_TIMER_PRESCALER), NULL);
 
 		nrf_gpio_pin_clear (LED_PIN);												//Led off.
 
