@@ -125,10 +125,10 @@ static ble_bas_t                             m_bas;                             
 
 #ifdef BEACON
 	#define UART_POWER  				12   //5TM Power
-	#define UART_RX							17
-	#define UART_TX							18
-	#define LED_PIN             19
-	#define ADC_AIN						  1 
+	#define UART_RX							15   //17
+	#define UART_TX							16   //18
+	#define LED_PIN             20   //19
+	#define ADC_AIN						  4    //1 
 
 #elif defined(SHENZHEN)
 	#define UART_POWER  				12   //5TM Power
@@ -149,7 +149,7 @@ static ble_bas_t                             m_bas;                             
 	#define TIME_PERIOD	 				300       /*5TM time period in seconds*/
 
 #else
-	#define TIME_PERIOD	 				 5      /*For test  time period in seconds*/
+	#define TIME_PERIOD	 				5      /*For test  time period in seconds*/
 #endif
 
 #define TIME_STEP 				     1         
