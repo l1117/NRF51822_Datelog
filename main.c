@@ -119,29 +119,37 @@ static ble_bas_t                             m_bas;                             
 #define DEAD_BEEF                     0xDEADBEEF                                    /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
 /*------------------------------------------------------------------------------------------------*/
-#define V5TM              			// for 5TM sensor  data log,  300Secs period.  Comment for timecounter test, 5Secs period.
+//#define V5TM              			// for 5TM sensor  data log,  300Secs period.  Comment for timecounter test, 5Secs period.
 //#define BEACON   							  // For iBeacon mode test
 //#define SHENZHEN
+#define MS49SF1
 
 #ifdef BEACON
 	#define UART_POWER  				12   //5TM Power
 	#define UART_RX							15   //17
 	#define UART_TX							16   //18
 	#define LED_PIN             20   //19
-	#define ADC_AIN						  4    //1 
+	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
+
+#elif defined(MS49SF1)
+	#define UART_POWER  				8   //5TM Power
+	#define UART_RX							16
+	#define UART_TX							17
+	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput5
+	#define LED_PIN             22
 
 #elif defined(SHENZHEN)
 	#define UART_POWER  				12   //5TM Power
 	#define UART_RX							15
 	#define UART_TX							16
-	#define ADC_AIN						  4
+	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
 	#define LED_PIN             20
 
 #else
 	#define UART_POWER  				13   //5TM Power
 	#define UART_RX							12
 	#define UART_TX							10
-	#define ADC_AIN						  4
+	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
 	#define LED_PIN             20
 #endif
 
@@ -149,7 +157,7 @@ static ble_bas_t                             m_bas;                             
 	#define TIME_PERIOD	 				300       /*5TM time period in seconds*/
 
 #else
-	#define TIME_PERIOD	 				5      /*For test  time period in seconds*/
+	#define TIME_PERIOD	 				10      /*For test  time period in seconds*/
 #endif
 
 #define TIME_STEP 				     1         
@@ -265,9 +273,9 @@ void battery_start(uint32_t AnalogInput)
 //	sd_nvic_EnableIRQ(ADC_IRQn);
 //	
 
-		if (AnalogInput==4)  AnalogInput=ADC_CONFIG_PSEL_AnalogInput4 ;
-		else if (AnalogInput==1)  AnalogInput=ADC_CONFIG_PSEL_AnalogInput1 ;
-		else  AnalogInput=ADC_CONFIG_PSEL_AnalogInput6 ;
+//		if (AnalogInput==4)  AnalogInput=ADC_CONFIG_PSEL_AnalogInput4 ;
+//		else if (AnalogInput==1)  AnalogInput=ADC_CONFIG_PSEL_AnalogInput1 ;
+//		else  AnalogInput=ADC_CONFIG_PSEL_AnalogInput6 ;
     // Configure ADC
     NRF_ADC->INTENSET   = AAR_INTENSET_END_Disabled;   				//ADC  Interrupt disabled. Must be disable.
     NRF_ADC->CONFIG     = (ADC_CONFIG_RES_8bit                        << ADC_CONFIG_RES_Pos)     |
@@ -1114,7 +1122,7 @@ int main(void)
                                             | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
 		nrf_gpio_pin_set (LED_PIN);												//Led on.
 		pstorage_module_param_t		 param;
-#ifndef BEACON
+#ifdef V5TM
 	 	nrf_delay_ms(20);  //There must be 20ms waitting for AT45DB161 ready from power on.
 		uint32_t *spi_base_address = spi_master_init(SPI0, SPI_MODE0, 0);
 		uint8_t tx_data[ ]={0XB9};
