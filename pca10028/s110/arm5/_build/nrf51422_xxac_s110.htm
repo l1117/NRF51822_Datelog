@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\_build\nrf51422_xxac_s110.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\_build\nrf51422_xxac_s110.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Mon Jun 08 16:47:52 2015
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Fri Jun 19 15:11:52 2015
 <BR><P>
 <H3>Maximum Stack Usage =        312 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -18,8 +18,8 @@ Mutually Recursive functions
  <LI><a href="#[5]">SysTick_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[5]">SysTick_Handler</a><BR>
  <LI><a href="#[c]">ADC_IRQHandler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[c]">ADC_IRQHandler</a><BR>
  <LI><a href="#[2d]">__asm___11_app_timer_c_cd27f9c3__nrf_delay_us</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[2d]">__asm___11_app_timer_c_cd27f9c3__nrf_delay_us</a><BR>
- <LI><a href="#[2b]">__asm___11_nrf_delay_c_532987f3__nrf_delay_us</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[2b]">__asm___11_nrf_delay_c_532987f3__nrf_delay_us</a><BR>
  <LI><a href="#[2c]">__asm___13_simple_uart_c_5dda6715__nrf_delay_us</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[2c]">__asm___13_simple_uart_c_5dda6715__nrf_delay_us</a><BR>
+ <LI><a href="#[2b]">__asm___11_nrf_delay_c_532987f3__nrf_delay_us</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[2b]">__asm___11_nrf_delay_c_532987f3__nrf_delay_us</a><BR>
 </UL>
 <P>
 <H3>
@@ -224,14 +224,14 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = __aeabi_uidivmod
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_init
-<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_clear
+<LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_clear
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;battery_start
 <LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timecounter_handler
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;swap_state_process
-<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_process
 </UL>
 
@@ -245,11 +245,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_register
 </UL>
 
-<P><STRONG><a name="[82]"></a>__aeabi_memcpy</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, memcpya.o(.text))
+<P><STRONG><a name="[83]"></a>__aeabi_memcpy</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, memcpya.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint8_array_encode
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;service_data_encode
 <LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manuf_specific_data_encode
-<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_load
+<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_load
 </UL>
 
 <P><STRONG><a name="[ac]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
@@ -333,7 +333,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> arm_startup_nrf51.o(RESET)
 </UL>
-<P><STRONG><a name="[88]"></a>__ARM_common_switch8</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, app_uart.o(i.__ARM_common_switch8))
+<P><STRONG><a name="[89]"></a>__ARM_common_switch8</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, app_uart.o(i.__ARM_common_switch8))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __ARM_common_switch8
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_event
@@ -357,8 +357,8 @@ Global Symbols
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timers_init
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;service_add
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;scheduler_init
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;power_manage
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;power_manage
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 <LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;notif_timeout_handler
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gap_params_init
@@ -430,7 +430,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 </UL>
-<BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 </UL>
 
 <P><STRONG><a name="[5d]"></a>ble_advdata_set</STRONG> (Thumb, 122 bytes, Stack size 104 bytes, ble_advdata.o(i.ble_advdata_set))
@@ -442,8 +442,8 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timecounter_handler
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 </UL>
 
 <P><STRONG><a name="[75]"></a>char_hex</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, main.o(i.char_hex))
@@ -458,8 +458,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SWI2_IRQHandler
 </UL>
 
-<P><STRONG><a name="[1f]"></a>main</STRONG> (Thumb, 240 bytes, Stack size 16 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 248<LI>Call Chain = main &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
+<P><STRONG><a name="[1f]"></a>main</STRONG> (Thumb, 246 bytes, Stack size 16 bytes, main.o(i.main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 296<LI>Call Chain = main &rArr; s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_register
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_init
@@ -470,7 +470,8 @@ Global Symbols
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timers_init
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;service_add
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;scheduler_init
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;power_manage
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;power_manage
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_set
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_clear
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gap_params_init
@@ -493,21 +494,21 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;advertising_start
 </UL>
 
-<P><STRONG><a name="[8c]"></a>pstorage_block_identifier_get</STRONG> (Thumb, 136 bytes, Stack size 20 bytes, pstorage.o(i.pstorage_block_identifier_get))
+<P><STRONG><a name="[8d]"></a>pstorage_block_identifier_get</STRONG> (Thumb, 136 bytes, Stack size 20 bytes, pstorage.o(i.pstorage_block_identifier_get))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = pstorage_block_identifier_get
 </UL>
-<BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 </UL>
 
-<P><STRONG><a name="[8e]"></a>pstorage_clear</STRONG> (Thumb, 166 bytes, Stack size 24 bytes, pstorage.o(i.pstorage_clear))
+<P><STRONG><a name="[8f]"></a>pstorage_clear</STRONG> (Thumb, 166 bytes, Stack size 24 bytes, pstorage.o(i.pstorage_clear))
 <BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = pstorage_clear &rArr; cmd_queue_enqueue &rArr; cmd_process &rArr; swap_state_process &rArr; pstorage_flash_page_end &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
-<LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;is_word_aligned
+<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;is_word_aligned
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_queue_enqueue
 </UL>
-<BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 </UL>
 
 <P><STRONG><a name="[7d]"></a>pstorage_init</STRONG> (Thumb, 130 bytes, Stack size 24 bytes, pstorage.o(i.pstorage_init))
@@ -515,19 +516,19 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_size
-<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_queue_init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[8d]"></a>pstorage_load</STRONG> (Thumb, 226 bytes, Stack size 40 bytes, pstorage.o(i.pstorage_load))
+<P><STRONG><a name="[8e]"></a>pstorage_load</STRONG> (Thumb, 226 bytes, Stack size 40 bytes, pstorage.o(i.pstorage_load))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = pstorage_load
 </UL>
-<BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
-<LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;is_word_aligned
+<BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;is_word_aligned
 </UL>
-<BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
+<BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 </UL>
 
 <P><STRONG><a name="[7e]"></a>pstorage_register</STRONG> (Thumb, 306 bytes, Stack size 24 bytes, pstorage.o(i.pstorage_register))
@@ -535,27 +536,27 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_size
-<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[91]"></a>pstorage_store</STRONG> (Thumb, 202 bytes, Stack size 24 bytes, pstorage.o(i.pstorage_store))
+<P><STRONG><a name="[92]"></a>pstorage_store</STRONG> (Thumb, 202 bytes, Stack size 24 bytes, pstorage.o(i.pstorage_store))
 <BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = pstorage_store &rArr; cmd_queue_enqueue &rArr; cmd_process &rArr; swap_state_process &rArr; pstorage_flash_page_end &rArr; __aeabi_uidivmod
 </UL>
-<BR>[Calls]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;is_word_aligned
+<BR>[Calls]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;is_word_aligned
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_queue_enqueue
 </UL>
-<BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 </UL>
 
-<P><STRONG><a name="[92]"></a>pstorage_sys_event_handler</STRONG> (Thumb, 436 bytes, Stack size 40 bytes, pstorage.o(i.pstorage_sys_event_handler))
+<P><STRONG><a name="[93]"></a>pstorage_sys_event_handler</STRONG> (Thumb, 436 bytes, Stack size 40 bytes, pstorage.o(i.pstorage_sys_event_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = pstorage_sys_event_handler &rArr; cmd_queue_dequeue &rArr; cmd_process &rArr; swap_state_process &rArr; pstorage_flash_page_end &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_queue_element_init
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_queue_dequeue
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_process
-<LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_notify
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_notify
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sys_evt_dispatch
 </UL>
@@ -566,7 +567,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_cfg_output
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_cfg_input
 </UL>
-<BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 </UL>
 
 <P><STRONG><a name="[96]"></a>simple_uart_get_with_timeout</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, simple_uart.o(i.simple_uart_get_with_timeout))
@@ -574,7 +575,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__asm___13_simple_uart_c_5dda6715__nrf_delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 </UL>
 
 <P><STRONG><a name="[25]"></a>softdevice_assertion_handler</STRONG> (Thumb, 18 bytes, Stack size 16 bytes, softdevice_handler.o(i.softdevice_assertion_handler))
@@ -617,7 +618,7 @@ Local Symbols
 <BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_timer_start
 <LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 </UL>
-<BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
+<BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;char_notify
 </UL>
@@ -628,7 +629,7 @@ Local Symbols
 <BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_timer_stop
 <LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 </UL>
-<BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
+<BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 </UL>
 
@@ -656,7 +657,7 @@ Local Symbols
 <BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;application_timers_start
 </UL>
-<BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
+<BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 <LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;connection_interval_timeout_handler
 </UL>
@@ -688,7 +689,7 @@ Local Symbols
 <LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;char_hex
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 </UL>
 
 <P><STRONG><a name="[27]"></a>notif_timeout_handler</STRONG> (Thumb, 74 bytes, Stack size 16 bytes, main.o(i.notif_timeout_handler))
@@ -701,13 +702,13 @@ Local Symbols
 </UL>
 <P><STRONG><a name="[80]"></a>nrf_gpio_pin_clear</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, main.o(i.nrf_gpio_pin_clear))
 <BR><BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 </UL>
 
 <P><STRONG><a name="[7a]"></a>nrf_gpio_pin_set</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, main.o(i.nrf_gpio_pin_set))
 <BR><BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 </UL>
 
@@ -715,7 +716,7 @@ Local Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 304<LI>Call Chain = on_ble_evt &rArr; on_write &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_write
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_set
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_clear
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;char_notify
@@ -727,11 +728,11 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_evt_dispatch
 </UL>
 
-<P><STRONG><a name="[83]"></a>on_write</STRONG> (Thumb, 284 bytes, Stack size 32 bytes, main.o(i.on_write))
+<P><STRONG><a name="[84]"></a>on_write</STRONG> (Thumb, 286 bytes, Stack size 32 bytes, main.o(i.on_write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 264<LI>Call Chain = on_write &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
-<BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_load
-<LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_block_identifier_get
+<BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_load
+<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_block_identifier_get
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_advdata_set
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gap_params_init
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;char_notify
@@ -741,7 +742,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_ble_evt
 </UL>
 
-<P><STRONG><a name="[81]"></a>power_manage</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, main.o(i.power_manage))
+<P><STRONG><a name="[82]"></a>power_manage</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, main.o(i.power_manage))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = power_manage
 </UL>
 <BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
@@ -749,14 +750,14 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[94]"></a>s5tm_timeout_handler</STRONG> (Thumb, 416 bytes, Stack size 40 bytes, main.o(i.s5tm_timeout_handler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 272<LI>Call Chain = s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
+<P><STRONG><a name="[81]"></a>s5tm_timeout_handler</STRONG> (Thumb, 462 bytes, Stack size 48 bytes, main.o(i.s5tm_timeout_handler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 280<LI>Call Chain = s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;simple_uart_get_with_timeout
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;simple_uart_config
-<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_store
-<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_clear
-<LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_block_identifier_get
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_store
+<LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_clear
+<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_block_identifier_get
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_advdata_set
 <LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;battery_start
@@ -764,7 +765,8 @@ Local Symbols
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_clear
 <LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 </UL>
-<BR>[Called By]<UL><LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timecounter_handler
+<BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timecounter_handler
 </UL>
 
 <P><STRONG><a name="[7c]"></a>scheduler_init</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, main.o(i.scheduler_init))
@@ -788,16 +790,16 @@ Local Symbols
 <P><STRONG><a name="[23]"></a>sys_evt_dispatch</STRONG> (Thumb, 48 bytes, Stack size 8 bytes, main.o(i.sys_evt_dispatch))
 <BR><BR>[Stack]<UL><LI>Max Depth = 180<LI>Call Chain = sys_evt_dispatch &rArr; pstorage_sys_event_handler &rArr; cmd_queue_dequeue &rArr; cmd_process &rArr; swap_state_process &rArr; pstorage_flash_page_end &rArr; __aeabi_uidivmod
 </UL>
-<BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
+<BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;advertising_start
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.ble_stack_init)
 </UL>
-<P><STRONG><a name="[28]"></a>timecounter_handler</STRONG> (Thumb, 56 bytes, Stack size 16 bytes, main.o(i.timecounter_handler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = timecounter_handler &rArr; s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
+<P><STRONG><a name="[28]"></a>timecounter_handler</STRONG> (Thumb, 58 bytes, Stack size 16 bytes, main.o(i.timecounter_handler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 296<LI>Call Chain = timecounter_handler &rArr; s5tm_timeout_handler &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_advdata_set
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;s5tm_timeout_handler
 <LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.timers_init)
@@ -864,7 +866,7 @@ Local Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = manuf_specific_data_encode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint16_encode
-<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;adv_data_encode
 </UL>
@@ -879,7 +881,7 @@ Local Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = service_data_encode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint16_encode
-<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;adv_data_encode
 </UL>
@@ -904,7 +906,7 @@ Local Symbols
 <P><STRONG><a name="[41]"></a>uint8_array_encode</STRONG> (Thumb, 82 bytes, Stack size 24 bytes, ble_advdata.o(i.uint8_array_encode))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = uint8_array_encode
 </UL>
-<BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;adv_data_encode
 </UL>
@@ -928,44 +930,44 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_tx_stop
 </UL>
-<BR>[Called By]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_tx_ready
+<BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_tx_ready
 </UL>
 
-<P><STRONG><a name="[8b]"></a>action_tx_send</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, app_uart.o(i.action_tx_send))
-<BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_put
+<P><STRONG><a name="[8c]"></a>action_tx_send</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, app_uart.o(i.action_tx_send))
+<BR><BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_put
 </UL>
 
-<P><STRONG><a name="[85]"></a>action_uart_deactivate</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, app_uart.o(i.action_uart_deactivate))
-<BR><BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_close
-<LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_tx_ready
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_cts_high
+<P><STRONG><a name="[86]"></a>action_uart_deactivate</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, app_uart.o(i.action_uart_deactivate))
+<BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_close
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_tx_ready
+<LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_cts_high
 </UL>
 
-<P><STRONG><a name="[84]"></a>on_cts_high</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, app_uart.o(i.on_cts_high))
+<P><STRONG><a name="[85]"></a>on_cts_high</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, app_uart.o(i.on_cts_high))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = on_cts_high
 </UL>
-<BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_uart_deactivate
+<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_uart_deactivate
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_event
 </UL>
 
-<P><STRONG><a name="[89]"></a>on_cts_low</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, app_uart.o(i.on_cts_low))
+<P><STRONG><a name="[8a]"></a>on_cts_low</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, app_uart.o(i.on_cts_low))
 <BR><BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_event
 </UL>
 
-<P><STRONG><a name="[86]"></a>on_tx_ready</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, app_uart.o(i.on_tx_ready))
+<P><STRONG><a name="[87]"></a>on_tx_ready</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, app_uart.o(i.on_tx_ready))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = on_tx_ready &rArr; action_tx_ready &rArr; action_tx_stop
 </UL>
-<BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_uart_deactivate
+<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_uart_deactivate
 <LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_tx_ready
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_event
 </UL>
 
-<P><STRONG><a name="[87]"></a>on_uart_close</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, app_uart.o(i.on_uart_close))
+<P><STRONG><a name="[88]"></a>on_uart_close</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, app_uart.o(i.on_uart_close))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = on_uart_close
 </UL>
-<BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_uart_deactivate
+<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_uart_deactivate
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_event
 </UL>
@@ -973,28 +975,28 @@ Local Symbols
 <P><STRONG><a name="[3b]"></a>on_uart_event</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, app_uart.o(i.on_uart_event))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = on_uart_event &rArr; on_tx_ready &rArr; action_tx_ready &rArr; action_tx_stop
 </UL>
-<BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_put
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_close
-<LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_tx_ready
-<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_cts_low
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_cts_high
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
+<BR>[Calls]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_put
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_close
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_tx_ready
+<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_cts_low
+<LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_cts_high
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_IRQHandler
 </UL>
 
-<P><STRONG><a name="[8a]"></a>on_uart_put</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, app_uart.o(i.on_uart_put))
+<P><STRONG><a name="[8b]"></a>on_uart_put</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, app_uart.o(i.on_uart_put))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = on_uart_put
 </UL>
-<BR>[Calls]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_tx_send
+<BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_tx_send
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_uart_event
 </UL>
 
-<P><STRONG><a name="[93]"></a>app_notify</STRONG> (Thumb, 34 bytes, Stack size 24 bytes, pstorage.o(i.app_notify))
+<P><STRONG><a name="[94]"></a>app_notify</STRONG> (Thumb, 34 bytes, Stack size 24 bytes, pstorage.o(i.app_notify))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = app_notify
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
+<BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
 </UL>
 
 <P><STRONG><a name="[66]"></a>cmd_process</STRONG> (Thumb, 346 bytes, Stack size 48 bytes, pstorage.o(i.cmd_process))
@@ -1004,7 +1006,7 @@ Local Symbols
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;swap_state_process
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_size
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
+<BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_queue_enqueue
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_queue_dequeue
 </UL>
@@ -1014,11 +1016,11 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_process
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
+<BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
 </UL>
 
 <P><STRONG><a name="[6c]"></a>cmd_queue_element_init</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, pstorage.o(i.cmd_queue_element_init))
-<BR><BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
+<BR><BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_sys_event_handler
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_queue_init
 </UL>
 
@@ -1027,8 +1029,8 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_process
 </UL>
-<BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_store
-<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_clear
+<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_store
+<LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_clear
 </UL>
 
 <P><STRONG><a name="[6b]"></a>cmd_queue_init</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, pstorage.o(i.cmd_queue_init))
@@ -1039,13 +1041,13 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_init
 </UL>
 
-<P><STRONG><a name="[8f]"></a>is_word_aligned</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, pstorage.o(i.is_word_aligned))
-<BR><BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_store
-<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_load
-<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_clear
+<P><STRONG><a name="[90]"></a>is_word_aligned</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, pstorage.o(i.is_word_aligned))
+<BR><BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_store
+<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_load
+<LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_clear
 </UL>
 
-<P><STRONG><a name="[90]"></a>pstorage_flash_page_end</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, pstorage.o(i.pstorage_flash_page_end))
+<P><STRONG><a name="[91]"></a>pstorage_flash_page_end</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, pstorage.o(i.pstorage_flash_page_end))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = pstorage_flash_page_end &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
@@ -1060,7 +1062,7 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_register
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_init
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;swap_state_process
-<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_process
 </UL>
 
@@ -1069,8 +1071,8 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_size
-<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pstorage_flash_page_end
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
 </UL>
 <BR>[Called By]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cmd_process
 </UL>

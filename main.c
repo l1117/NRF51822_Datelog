@@ -130,6 +130,7 @@ static ble_bas_t                             m_bas;                             
 	#define UART_TX							16   //18
 	#define LED_PIN             20   //19
 	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
+	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
 
 #elif defined(MS49SF1)
 	#define UART_POWER  				8   //5TM Power
@@ -137,6 +138,7 @@ static ble_bas_t                             m_bas;                             
 	#define UART_TX							17
 	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput5
 	#define LED_PIN             22
+	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
 
 #elif defined(SHENZHEN)
 	#define UART_POWER  				12   //5TM Power
@@ -144,6 +146,8 @@ static ble_bas_t                             m_bas;                             
 	#define UART_TX							16
 	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
 	#define LED_PIN             20
+	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
+
 
 #else
 	#define UART_POWER  				13   //5TM Power
@@ -151,14 +155,10 @@ static ble_bas_t                             m_bas;                             
 	#define UART_TX							10
 	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
 	#define LED_PIN             20
+	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
+
 #endif
 
-#ifdef V5TM
-	#define TIME_PERIOD	 				300       /*5TM time period in seconds*/
-
-#else
-	#define TIME_PERIOD	 				10      /*For test  time period in seconds*/
-#endif
 
 #define TIME_STEP 				     1         
 #if (TIME_PERIOD % TIME_STEP) 
@@ -168,6 +168,8 @@ static ble_bas_t                             m_bas;                             
 #ifdef BEACON
 	static uint8_t adv_name[22] = "BCON_Time:" ;
 #elif defined(V5TM)
+	static uint8_t adv_name[22] = "CSTN_5TM0:" ;
+#elif defined(MS49SF1)
 	static uint8_t adv_name[22] = "CSTN_5TM0:" ;
 #else
 	static uint8_t adv_name[22] = "CST@_Time:" ;
@@ -665,19 +667,23 @@ static void s5tm_timeout_handler(void * p_context)
 	
 //				ble_bas_battery_level_update(&m_bas,batt_lvl_in_milli_volts/100);  //For display 3.0V*100 on IOS
 				
-				nrf_gpio_pin_set (UART_POWER);												//Open power and UART for 5TM 
 //				nrf_gpio_pin_clear (UART_POWER);												//Open power and UART for 5TM 
-
+				uint8_t cr; //rx_count=10;
+				uint8_t adv_i = 4;
+				Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
 				NRF_UART0->POWER = (UART_POWER_POWER_Enabled << UART_POWER_POWER_Pos);
 				simple_uart_config(NULL, UART_TX, NULL, UART_RX, false);
-				uint8_t cr; //rx_count=10;
-				Vtm_humi=0,Vtm_unknow=0,Vtm_temp=0;
+		  	nrf_gpio_pin_set (UART_POWER);												//Open power and UART for 5TM 
+				while (simple_uart_get_with_timeout(4, &cr));					//clear RX buffer, must be!
 				for (uint8_t i=0;i<50;i++){										//Get date from 5tm 
 //						m_addl_adv_manuf_data[rx_count++]=cr;  //simple_uart_put(cr);
-
 					if (simple_uart_get_with_timeout(4, &cr)) {
-							if (cr == 0x20) data_pos = true;    //5TM data start postion.
-							if ((cr>>4) == 3 ) { 
+							if (cr==0x0D) break;
+//							m_addl_adv_manuf_data[adv_i++] = cr;
+							if (cr >='0' && cr<= '9') 
+//							if ((cr>>4) == 3 ) 
+								{ 
+								data_pos = true;    //5TM data start postion.
 								switch (data_id){
 									case 1: {
 										Vtm_humi = Vtm_humi<<4;
@@ -697,7 +703,7 @@ static void s5tm_timeout_handler(void * p_context)
 									default: break;
 								}
 							}
-						else if(data_pos) data_id++;
+						else if(data_pos && cr==' ') data_id++;
 					}
 		}	
 				NRF_UART0->POWER = (UART_POWER_POWER_Disabled << UART_POWER_POWER_Pos);
@@ -706,10 +712,10 @@ static void s5tm_timeout_handler(void * p_context)
 				nrf_gpio_pin_clear (UART_POWER);
 //				nrf_gpio_pin_set (UART_POWER);
 				sd_temp_get(&nrf_temp);  													//Get Cpu tempreature
-#ifdef V5TM
-				data_saved = (Vtm_humi << 16) + Vtm_temp ;
-#else
+#ifdef BEACON
 				data_saved = timer_counter ; //test flash write
+#else
+				data_saved = (Vtm_humi << 16) + Vtm_temp ;
 #endif
 						pstorage_handle_t 		flash_handle;
 //						pstorage_block_identifier_get(&flash_base_handle,((((timer_counter/TIME_PERIOD)>>8))%PSTORAGE_MAX_APPLICATIONS), &flash_handle);
@@ -1184,7 +1190,7 @@ int main(void)
     err_code = app_timer_start(m_timecounter_id,  APP_TIMER_TICKS(TIME_STEP*1000, APP_TIMER_PRESCALER), NULL);
 
 		nrf_gpio_pin_clear (LED_PIN);												//Led off.
-
+		s5tm_timeout_handler(NULL);
 		for(;;)	{
       app_sched_execute();
 			power_manage();
