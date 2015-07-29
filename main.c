@@ -122,8 +122,8 @@ static ble_bas_t                             m_bas;                             
 //#define V5TM              			// for 5TM sensor  data log,  300Secs period.  Comment for timecounter test, 5Secs period.
 //#define BEACON   							  // For iBeacon mode test
 //#define SHENZHEN
-#define MS49SF1
-
+//#define MS49SF1
+#define AAAPCB
 #ifdef BEACON
 	#define UART_POWER  				12   //5TM Power
 	#define UART_RX							15   //17
@@ -131,6 +131,7 @@ static ble_bas_t                             m_bas;                             
 	#define LED_PIN             20   //19
 	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
 	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
+	static uint8_t adv_name[22] = "BCON_Time:" ;
 
 #elif defined(MS49SF1)
 	#define UART_POWER  				8   //5TM Power
@@ -139,6 +140,7 @@ static ble_bas_t                             m_bas;                             
 	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput5
 	#define LED_PIN             22
 	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
+	static uint8_t adv_name[22] = "GPS_5TM:  " ;
 
 #elif defined(SHENZHEN)
 	#define UART_POWER  				12   //5TM Power
@@ -147,7 +149,17 @@ static ble_bas_t                             m_bas;                             
 	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
 	#define LED_PIN             20
 	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
+	static uint8_t adv_name[22] = "SZ_5TM0:  " ;
 
+
+#elif defined(AAAPCB)
+	#define UART_POWER  				13   //5TM Power
+	#define UART_RX							12
+	#define UART_TX							10
+	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
+	#define LED_PIN             20
+	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
+	static uint8_t adv_name[22] = "AAA_5TM:  " ;
 
 #else
 	#define UART_POWER  				13   //5TM Power
@@ -156,25 +168,16 @@ static ble_bas_t                             m_bas;                             
 	#define ADC_AIN						  ADC_CONFIG_PSEL_AnalogInput4
 	#define LED_PIN             20
 	#define TIME_PERIOD	 				300      /*For test  time period in seconds*/
+	static uint8_t adv_name[22] = "XXX_Time:" ;
 
 #endif
 
 
-#define TIME_STEP 				     1         
+#define TIME_STEP 				     10      
 #if (TIME_PERIOD % TIME_STEP) 
 	#error "timer step not TIME_PERIOD int times"
 #endif
-
-#ifdef BEACON
-	static uint8_t adv_name[22] = "BCON_Time:" ;
-#elif defined(V5TM)
-	static uint8_t adv_name[22] = "CSTN_5TM0:" ;
-#elif defined(MS49SF1)
-	static uint8_t adv_name[22] = "CSTN_5TM0:" ;
-#else
-	static uint8_t adv_name[22] = "CST@_Time:" ;
-#endif
-
+  
 #define PSTORAGE_PAGE_SIZE		1024
 
 /**@brief 128-bit UUID base List. */
@@ -1128,13 +1131,7 @@ int main(void)
                                             | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
 		nrf_gpio_pin_set (LED_PIN);												//Led on.
 		pstorage_module_param_t		 param;
-#ifdef V5TM
-	 	nrf_delay_ms(20);  //There must be 20ms waitting for AT45DB161 ready from power on.
-		uint32_t *spi_base_address = spi_master_init(SPI0, SPI_MODE0, 0);
-		uint8_t tx_data[ ]={0XB9};
-    spi_master_tx_rx(spi_base_address, 1, (const uint8_t *)tx_data, tx_data);
-#else
-		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_ENABLE);
+//		sd_power_dcdc_mode_set  ( NRF_POWER_DCDC_ENABLE);
 //			NRF_GPIO->PIN_CNF[UART_POWER] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
 //                                            | (GPIO_PIN_CNF_DRIVE_H0S1 << GPIO_PIN_CNF_DRIVE_Pos)
 //                                            | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
@@ -1142,7 +1139,7 @@ int main(void)
 //                                            | (GPIO_PIN_CNF_DIR_Input << GPIO_PIN_CNF_DIR_Pos);
 //    nrf_gpio_cfg_input(UART_POWER, NRF_GPIO_PIN_PULLUP);
 
-#endif
+//#endif
 		NRF_GPIO->PIN_CNF[UART_POWER] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
                                             | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos)
                                             | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
@@ -1161,7 +1158,7 @@ int main(void)
 		param.cb          = example_cb_handler;   								//Set the pstorage callback handler
 		err_code = pstorage_register(&param, &flash_base_handle);
     gap_params_init();
-//    sd_ble_gap_tx_power_set(4);
+    sd_ble_gap_tx_power_set(4);
 		service_add();
 		connectable_adv_init();
 //    advertising_data_init();
